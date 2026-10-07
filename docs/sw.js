@@ -1,5 +1,5 @@
 // Zaguero · service worker: funciona sin conexión y escribe las notificaciones con tus datos
-const CACHE='zaguero-v2';
+const CACHE='zaguero-v3';
 const FILES=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./apple-touch-icon.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)));self.skipWaiting()});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
@@ -33,35 +33,52 @@ function daysFromStart(S,date){return Math.round((date-mondayOf(parseISO(S.start
 const isMeasure=(S,d)=>{const x=daysFromStart(S,d);return x>=0&&x%28===0};
 const isTest=(S,d)=>{const x=daysFromStart(S,d);return x>=23&&(x-23)%28===0};
 function done(S,id,mon){const l=S.logs&&S.logs[iso(mon)+'|'+id];if(!l)return false;if(l.done)return true;const ex=l.ex||{};for(const i in ex){const e=ex[i];if(e&&e.sets&&e.sets.some(x=>x&&x.ok))return true}return false}
+const SHORT={md1:'torso pesado',md4:'pierna',md3:'torso y brazos'};
+const pick=(arr,date,salt)=>arr[(Math.floor(date/864e5)+(salt||0))%arr.length];
+const POOL={
+  md1:[['Hoy se carga arriba 💪','Ayer partido, hoy press pesado. Las piernas descansan, el pecho trabaja.'],['Día de press 🏋️','Barra cargada y cabeza fría. Hoy se gana fuerza para el cuerpo a cuerpo.'],['Hoy se construye la armadura','Pecho, espalda y hombros. Lo que te hace imposible de mover en el área.']],
+  md4:[['Hoy, piernas de central 🦵','Saltos, sentadilla pesada y nórdico. Aquí se ganan los duelos aéreos.'],['Día de pierna. Sin excusas','La sesión más importante de la semana. Potencia para el primer paso y el salto.'],['Hoy se fabrica el salto ⚡','Sentadilla y contraste. Cada serie, un centímetro más arriba en el próximo córner.']],
+  md3:[['Hoy toca bombear 🔥','Torso y brazos con volumen. Presencia que se ve desde la grada.'],['Hombros y brazos, hoy','Sesión de volumen por la mañana. Esta tarde, al campo con el equipo.'],['Hoy se gana tamaño','Series de 8 a 15, buen bombeo y a por el entreno de la tarde.']]
+};
+function phaseTag(S,date){const ph=phase(S,date);if(!ph.started)return '';return ['',' Esta semana se suben los kilos.',' Semana de pico: hoy van los pesos más altos del bloque.',' Semana suave: recargas para el siguiente bloque.'][ph.pi]}
+function streak(S,date){
+  let n=0,mon=addDays(mondayOf(date),-7);
+  for(let k=0;k<52;k++){const p=planFor(S,mon),ids=Object.keys(p.gym).filter(id=>on(p.gym[id]));if(!ids.length||!ids.every(id=>done(S,id,mon)))break;n++;mon=addDays(mon,-7)}
+  return n;
+}
 function dayLine(S,date){
-  const I=info(S,date),ph=phase(S,date);
-  if(I.g)return{t:'Hoy: '+NAMES[I.g]+(I.md?' · '+I.md:''),b:(ph.started?'Semana '+(ph.pi+1)+', '+PH[ph.pi][0]+'. Fuerza principal: '+PH[ph.pi][1]+'. ':'')+(I.field?'Gimnasio por la mañana y entreno de equipo por la tarde. ':'')+'Rellena el semáforo antes de empezar.'};
-  if(I.match)return{t:'Día de partido',b:'Come 3-4 horas antes, bebe agua desde por la mañana y calienta bien. A por ello.'};
-  if(I.field)return{t:'Hoy entreno con el equipo',b:'Sin gimnasio. Llega hidratado y come algo 2-3 horas antes.'};
-  if(I.md==='MD-1')return{t:'Mañana hay partido',b:'Activación suave o descanso. Cena con hidratos y a dormir pronto.'};
-  return{t:'Día de recuperación',b:'15 minutos de movilidad, proteína en cada comida y 8 horas de sueño.'};
+  const I=info(S,date);
+  if(I.g){const m=pick(POOL[I.g],date);return{t:m[0],b:m[1]+phaseTag(S,date)}}
+  if(I.match)return pick([{t:'Día de partido 🔥',b:'Hoy nadie te gana un balón por arriba. Come 3-4 horas antes y a mandar en tu área.'},{t:'Hoy se compite',b:'Agua desde por la mañana, buen calentamiento y a dejar la portería a cero.'},{t:'Partido. Tu área, tus reglas',b:'Todo lo del gimnasio sale hoy al campo. A disfrutarlo.'}],date);
+  if(I.md==='MD-1')return pick([{t:'Mañana se compite',b:'Hoy toca cargar pilas: descanso o 10 minutos de activación, y cena con hidratos.'},{t:'Víspera de partido',b:'Piernas frescas, cabeza tranquila. Cena bien y a dormir pronto.'}],date);
+  if(I.field)return pick([{t:'Hoy toca balón ⚽',b:'Entreno con el equipo. Sin gimnasio hoy: llega hidratado y con algo de comida.'},{t:'Tarde de entreno',b:'Hoy el gimnasio es el campo. Esprinta al máximo alguna vez: tu isquio lo agradece.'}],date);
+  return pick([{t:'Día libre. Hoy creces 🌱',b:'El músculo se construye descansando. Proteína, movilidad y 8 horas de sueño.'},{t:'Hoy toca recuperar',b:'15 minutos de movilidad y buena comida. Mañana más.'}],date);
 }
 function morning(S){
-  const t=today(),L=dayLine(S,t),extra=[];let title=L.t;
-  if(isMeasure(S,t)){extra.push('Antes de desayunar toca medirse: peso y perímetros, siempre igual.');title='Hoy: medidas del mes'}
-  if(isTest(S,t)){extra.push('Test de potencia (salto vertical, horizontal y sprint de 20 m) después del calentamiento y antes de la sesión.');if(title===L.t)title='Hoy: test de potencia'}
-  return{title,body:(title!==L.t?L.t.replace('Hoy: ','')+'. ':'')+extra.concat([L.b]).join(' ')};
+  const t=today(),L=dayLine(S,t);
+  if(isMeasure(S,t))return{title:'Día de medidas 📏',body:'Antes de desayunar: báscula y cinta. Vamos a ver cuánto has crecido. Después, '+L.t.replace(/ [^\wáéíóúñ.]+$/u,'').toLowerCase()+'.'};
+  if(isTest(S,t))return{title:'Hoy se mide la potencia ⚡',body:'Salto y sprint después de calentar, antes de la sesión. A batir tu marca.'};
+  return{title:L.t,body:L.b};
 }
 function evening(S){
   const t=today(),I=info(S,t),tm=addDays(t,1),J=info(S,tm);
   if(I.d===6){
-    const ids=Object.keys(I.p.gym).filter(k=>on(I.p.gym[k])),dn=ids.filter(id=>done(S,id,I.mon)).length;
-    const np=planFor(S,addDays(I.mon,7)),next=Object.keys(np.gym).filter(k=>on(np.gym[k])).sort((a,b)=>np.gym[a]-np.gym[b]).map(id=>D3[np.gym[id]]+' '+NAMES[id].split(' · ')[0].toLowerCase()+(id==='md4'?'':' ('+NAMES[id].split(' · ')[1].toLowerCase()+')'));
-    return{title:'Resumen de la semana: '+dn+'/'+ids.length+' sesiones',body:(dn>=ids.length&&ids.length?'Semana completa. ':'')+'La próxima: '+(next.join(', ')||'sin gimnasio')+'.'+(isMeasure(S,tm)?' Mañana medidas en ayunas: no desayunes antes de medirte.':'')};
+    const ids=Object.keys(I.p.gym).filter(k=>on(I.p.gym[k])),dn=ids.filter(id=>done(S,id,I.mon)).length,st=streak(S,addDays(I.mon,7));
+    let title,body;
+    if(ids.length&&dn>=ids.length){title='Semana perfecta: '+dn+'/'+ids.length+' 🔥';body=(st>1?'Llevas '+st+' semanas seguidas completas. ':'')+'El lunes arranca otra. A por ella.'}
+    else if(dn>0){title='Semana cerrada: '+dn+'/'+ids.length;body='Bien sumado. La próxima, a por todas.'}
+    else{title='Nueva semana, nueva oportunidad';body='El lunes se empieza de cero. Tú decides cómo acaba.'}
+    if(isMeasure(S,tm))body+=' Mañana medidas: no desayunes antes de medirte.';
+    return{title,body};
   }
-  if(I.g&&!done(S,I.g,I.mon))return{title:'¿Registraste '+NAMES[I.g]+'?',body:'Márcala en la app para que cuente en tu progreso. Si hoy no pudiste, muévela en "Editar días".'};
+  if(I.g&&!done(S,I.g,I.mon))return pick([{title:'¿Hecha la de hoy? ✅',body:'Márcala en Zaguero y suma a tu racha.'},{title:'Que no se quede sin apuntar',body:'Registra la sesión de hoy: cada serie cuenta para tu progreso.'}],t);
   let title,body;
-  if(J.g){title='Mañana: '+NAMES[J.g]+(J.md?' · '+J.md:'');body=(J.field?'Gimnasio por la mañana. ':'')+'Deja preparada la mochila y duerme 8 horas.'}
-  else if(J.match){title='Mañana hay partido';body='Cena con hidratos, hidrátate y a dormir pronto.'}
-  else if(J.field){title='Mañana entreno con el equipo';body='Sin gimnasio. Recupera bien esta noche.'}
-  else {title='Mañana descanso';body='Aprovecha para recuperar: movilidad suave y buena comida.'}
-  if(isMeasure(S,tm))body='Mañana medidas en ayunas: no desayunes antes de medirte. '+body;
-  if(isTest(S,tm))body='Mañana test de potencia. '+body;
+  if(J.g){title='Mañana toca '+SHORT[J.g];body=pick(['Mochila preparada y 8 horas de sueño. Mañana se rinde.','Cena bien y a dormir pronto. Mañana se suma.'],t)}
+  else if(J.match){title='Mañana hay partido 🔥';body='Hidrátate, cena con hidratos y a dormir pronto.'}
+  else if(J.field){title='Mañana, balón';body='Recupera bien esta noche. Mañana toca campo.'}
+  else{title='Mañana descanso';body='Te lo has ganado. Recupera y vuelve con más.'}
+  if(isMeasure(S,tm)){title='Mañana, día de medidas 📏';body='No desayunes antes de medirte. Báscula y cinta en ayunas.'}
+  if(isTest(S,tm)){title='Mañana se mide la potencia ⚡';body='Duerme bien: salto y sprint antes de la sesión.'}
   return{title,body};
 }
 self.addEventListener('push',e=>{
