@@ -4,3 +4,4 @@ calendario/
 app.fragment.html
 /index.html
 __pycache__/
+.vapid-privado.json
