@@ -627,7 +627,33 @@ function load(){
   try{var r=JSON.parse(localStorage.getItem(KEY)||'null');if(r&&typeof r==='object'){for(var k in d){if(r[k]!==undefined)d[k]=r[k]}}}catch(e){}
   return d;
 }
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}mirror()}
+/* copia del estado para el service worker (notificaciones) */
+function mirror(){try{if(!('indexedDB' in window))return;var r=indexedDB.open('zaguero-sw',1);r.onupgradeneeded=function(){r.result.createObjectStore('kv')};
+  r.onsuccess=function(){try{var tx=r.result.transaction('kv','readwrite');tx.objectStore('kv').put(JSON.stringify(S),'state')}catch(e){}}}catch(e){}}
+var VAPID='BK0t-N9EPxLDnfZGsXJo4osB30qcWKO7HH6iXtRMPpWK5vYmsktoaHjIT7rtN30sMvBsDFxvVdAAd8EH4dtEtUY',NOTI={sub:null,msg:''};
+function isStandalone(){try{return window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch(e){return false}}
+function b64u(s){var p='='.repeat((4-s.length%4)%4),b=atob((s+p).replace(/-/g,'+').replace(/_/g,'/')),a=new Uint8Array(b.length);for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a}
+function notiInit(){try{if(!('serviceWorker' in navigator))return;navigator.serviceWorker.ready.then(function(reg){if(!reg.pushManager)return;return reg.pushManager.getSubscription().then(function(s){if(s){NOTI.sub=JSON.stringify(s);if(view==='plan')render(false)}})}).catch(function(){})}catch(e){}}
+function notiEnable(){
+  if(!isStandalone()){toast('Abre Zaguero desde el icono de la pantalla de inicio para activarlas');return}
+  if(!('Notification' in window)||!('serviceWorker' in navigator)){toast('Este navegador no admite notificaciones');return}
+  Notification.requestPermission().then(function(p){
+    if(p!=='granted'){toast('Permiso denegado. Actívalo en Ajustes > Notificaciones > Zaguero');return}
+    return navigator.serviceWorker.ready.then(function(reg){return reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(VAPID)})}).then(function(s){NOTI.sub=JSON.stringify(s);mirror();render(false);toast('Notificaciones activadas')});
+  }).catch(function(){toast('No se pudieron activar. Inténtalo de nuevo')});
+}
+function notiTest(){navigator.serviceWorker.ready.then(function(reg){reg.showNotification('Zaguero',{body:'Así te llegarán los avisos. Mañana a las 7:30 recibirás el primero.',icon:'icon-192.png',badge:'icon-192.png'})}).catch(function(){toast('No se pudo mostrar la prueba')})}
+function notiCard(){
+  var on_=!!NOTI.sub,st=isStandalone();
+  var out='<div class="sec-h"><h2 class="h2">Notificaciones</h2><span class="meta">'+(on_?'Activadas':'Desactivadas')+'</span></div><div class="list" style="padding:14px 16px">';
+  out+='<p class="meta" style="margin:0 0 12px">Cada mañana a las 7:30, lo que toca hoy (sesión, partido, medidas o test). Cada noche a las 21:00, si te falta registrar la sesión, lo que toca mañana o, el domingo, el resumen de la semana.</p>';
+  if(!st&&!on_)out+='<p class="meta" style="margin:0 0 12px;color:var(--warn)">Para activarlas, abre Zaguero desde su icono en la pantalla de inicio, no desde Safari.</p>';
+  if(!on_)out+='<button type="button" class="pill white" style="height:46px" data-a="notion">Activar notificaciones</button>';
+  else out+='<div class="frow" style="margin:0 0 12px"><button type="button" class="btn" data-a="notitest">Probar aviso</button><button type="button" class="btn" data-a="noticopy">Copiar código de conexión</button></div>'+
+    '<p class="meta" style="margin:0">Último paso: copia el código de conexión y pégalo en el chat con Claude para conectar los envíos automáticos. Solo hay que hacerlo una vez.</p><textarea id="subtxt" readonly aria-label="Código de conexión" style="width:100%;min-height:70px;margin-top:10px;border-radius:12px;border:1px solid var(--line2);background:var(--s2);color:var(--fg);font:11px/1.4 var(--f-mono);padding:10px">'+esc(NOTI.sub)+'</textarea>';
+  return out+'</div>';
+}
 
 /* ---------- utilidades ---------- */
 function pad(n){return String(n).padStart(2,'0')}
@@ -1194,7 +1220,7 @@ function vPlan(){
     '<details class="bk"><summary>Copia de seguridad</summary><p>Los datos viven solo en este navegador. Copia el texto y guárdalo para no perderlos o pasarlos a otro dispositivo.</p>'+
     '<textarea id="bk" aria-label="Copia de seguridad">'+esc(JSON.stringify(S))+'</textarea>'+
     '<div class="frow" style="margin:10px 0 16px"><button type="button" class="btn" data-a="bkcopy">Copiar</button><button type="button" class="btn" data-a="bkrestore">Restaurar</button></div></details>'+
-    '<div class="sec-h"><h2 class="h2">Empezar de cero</h2></div><div class="list" style="padding:14px 16px"><p class="meta" style="margin:0 0 12px">Borra sesiones, medidas, tests, días editados y 1RM guardados en este dispositivo. Los vídeos que hayas subido se mantienen.</p>'+
+    notiCard()+'<div class="sec-h"><h2 class="h2">Empezar de cero</h2></div><div class="list" style="padding:14px 16px"><p class="meta" style="margin:0 0 12px">Borra sesiones, medidas, tests, días editados y 1RM guardados en este dispositivo. Los vídeos que hayas subido se mantienen.</p>'+
     (WIPE?'<div class="frow" style="margin:0"><button type="button" class="btn" style="border-color:var(--bad);color:var(--bad)" data-a="wipeok">Sí, borrar todo</button><button type="button" class="btn" data-a="wipe">Cancelar</button></div>':'<button type="button" class="btn" data-a="wipe">Borrar mis datos</button>')+'</div>';
   return out;
 }
@@ -1449,6 +1475,9 @@ document.addEventListener('click',function(ev){
   if(a==='wk0'){S.offset=0;save();render(false);toast('Semana real del bloque');return}
   if(a==='bkcopy'){var ta=document.getElementById('bk');ta.value=JSON.stringify(S);ta.select();
     if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(ta.value).then(function(){toast('Copia lista')},function(){toast('Texto seleccionado: cópialo a mano')})}else toast('Texto seleccionado: cópialo a mano');return}
+  if(a==='notion'){notiEnable();return}
+  if(a==='notitest'){notiTest();return}
+  if(a==='noticopy'){var ta2=document.getElementById('subtxt');ta2.select();if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(NOTI.sub).then(function(){toast('Código copiado')},function(){toast('Texto seleccionado: cópialo a mano')})}else toast('Texto seleccionado: cópialo a mano');return}
   if(a==='wipe'){WIPE=!WIPE;render(false);return}
   if(a==='wipeok'){S={start:S.start,offset:0,logs:{},plan:{gym:{md1:0,md4:2,md3:3},field:[1,3,4],match:6},weeks:{},rm:{},tests:[],meas:[],perf:[]};save();WIPE=false;render(false);toast('Datos borrados. Empiezas de cero');return}
   if(a==='bkrestore'){try{var o=JSON.parse(document.getElementById('bk').value);if(!o||typeof o!=='object'||!o.logs)throw 0;
@@ -1479,6 +1508,8 @@ document.addEventListener('change',function(ev){
 
 render(false);
 mediaLoad();
+mirror();
+notiInit();
 })();
 </script>
 
