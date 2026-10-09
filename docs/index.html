@@ -648,7 +648,7 @@ var REFS=[
 /* ---------- estado ---------- */
 var S=load();
 function load(){
-  var d={start:'2026-10-12',offset:0,logs:{},plan:{gym:{md1:0,md5:1,md4:2,md3:3},field:[1,3,4],match:6},weeks:{},rm:{},tests:[],meas:[],perf:[]};
+  var d={start:'2026-10-12',offset:0,logs:{},plan:{gym:{md1:0,md4:2,md3:3},field:[1,3,4],match:6},weeks:{},rm:{},tests:[],meas:[],perf:[]};
   try{var r=JSON.parse(localStorage.getItem(KEY)||'null');if(r&&typeof r==='object'){for(var k in d){if(r[k]!==undefined)d[k]=r[k]}}}catch(e){}
   return d;
 }
@@ -1509,7 +1509,7 @@ document.addEventListener('click',function(ev){
   if(a==='notitest'){notiTest();return}
   if(a==='noticopy'){var ta2=document.getElementById('subtxt');ta2.select();if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(NOTI.sub).then(function(){toast('Código copiado')},function(){toast('Texto seleccionado: cópialo a mano')})}else toast('Texto seleccionado: cópialo a mano');return}
   if(a==='wipe'){WIPE=!WIPE;render(false);return}
-  if(a==='wipeok'){S={start:S.start,offset:0,logs:{},plan:{gym:{md1:0,md5:1,md4:2,md3:3},field:[1,3,4],match:6},weeks:{},rm:{},tests:[],meas:[],perf:[]};save();WIPE=false;render(false);toast('Datos borrados. Empiezas de cero');return}
+  if(a==='wipeok'){S={start:S.start,offset:0,logs:{},plan:{gym:{md1:0,md4:2,md3:3},field:[1,3,4],match:6},weeks:{},rm:{},tests:[],meas:[],perf:[]};save();WIPE=false;render(false);toast('Datos borrados. Empiezas de cero');return}
   if(a==='bkrestore'){try{var o=JSON.parse(document.getElementById('bk').value);if(!o||typeof o!=='object'||!o.logs)throw 0;
     S={start:o.start||S.start,offset:o.offset||0,logs:o.logs};save();render(false);toast('Datos restaurados')}catch(err){toast('El texto no es una copia válida')}return}
   if(!P)return;

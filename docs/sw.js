@@ -13,7 +13,7 @@ self.addEventListener('fetch',e=>{
 const NAMES={md1:'Torso · Fuerza',md5:'Torso · Explosivo',md4:'Pierna · Potencia',md3:'Torso · Volumen'};
 const PH=[['Acumulación','5 reps al 75-80 %'],['Intensificación','4 reps al 80-85 %'],['Pico','3 reps al 85-88 %'],['Descarga','cargas bajas y una serie menos']];
 const D3=['lun','mar','mié','jue','vie','sáb','dom'];
-const DEF={gym:{md1:0,md5:1,md4:2,md3:3},field:[1,3,4],match:6};
+const DEF={gym:{md1:0,md4:2,md3:3},field:[1,3,4],match:6};
 const pad=n=>String(n).padStart(2,'0');
 const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
 const parseISO=s=>{const p=String(s).split('-').map(Number);return new Date(p[0],p[1]-1,p[2])};
