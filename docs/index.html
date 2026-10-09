@@ -725,7 +725,7 @@ function whenOf(id){
   if(!on(d))return 'Fuera esta semana';
   return DAYF[d].charAt(0).toUpperCase()+DAYF[d].slice(1)+(md?' · '+md:'')+(p.field.indexOf(d)>-1?' · gimnasio antes del entreno de 19:30':'');
 }
-function gymOrder(mon,all){var p=planFor(mon||curMon());var a=['md1','md5','md4','md3'].filter(function(id){return on(p.gym[id])}).sort(function(x,y){return p.gym[x]-p.gym[y]});if(all)['md1','md5','md4','md3'].forEach(function(id){if(a.indexOf(id)<0)a.push(id)});return a}
+function gymOrder(mon,all){var p=planFor(mon||curMon());var a=['md1','md5','md4','md3'].filter(function(id){return on(p.gym[id])}).sort(function(x,y){return p.gym[x]-p.gym[y]});if(all)['md1','md5','md4','md3'].forEach(function(id){if(a.indexOf(id)<0&&(id!=='md5'||on(p.gym.md5)))a.push(id)});return a}
 function planWarnings(p){
   var w=[],days=[p.gym.md1,p.gym.md5,p.gym.md4,p.gym.md3].filter(on);
   if(new Set(days).size<days.length)w.push(['r','Dos sesiones el mismo día','Cada sesión necesita su día. Mueve una de ellas.']);
@@ -1283,7 +1283,7 @@ function renderEditor(){
   var html='<div class="scrim" data-a="edclose"><div class="modal" role="dialog" aria-label="Editar semana"><div class="grab"></div>'+
     '<h2 class="title" style="font-size:22px">Tu semana</h2><div class="meta" style="margin-top:6px">Toca un día para mover la sesión. Toca el día marcado para quitarla esa semana. Los códigos MD se recalculan según el partido.</div>'+
     '<div class="wkchips">'+chips+'</div>'+
-    ['md1','md5','md4','md3'].map(function(id){var md=mdLabel(ED.p.gym[id],ED.p.match);
+    ['md1','md5','md4','md3'].filter(function(id){return id!=='md5'||on(ED.p.gym.md5)}).map(function(id){var md=mdLabel(ED.p.gym[id],ED.p.match);
       return '<div class="ed"><div class="meta"><span>'+esc(GYM[id].name)+'</span><span class="mono">'+(on(ED.p.gym[id])?DAYF[ED.p.gym[id]]+(md?' · '+md:''):'No esta semana')+'</span></div>'+d7('gym',id,ED.p.gym[id],id==='md4'?'acc':'')+'</div>'}).join('')+
     '<div class="ed"><div class="meta"><span>Entrenos con el equipo</span><span class="mono">'+ED.p.field.length+' días</span></div>'+d7('field')+'</div>'+
     '<div class="ed"><div class="meta"><span>Partido</span><button type="button" class="linkbtn" style="padding:0" data-a="ed" data-k="nomatch">'+(ED.p.match===null?'Añadir partido':'Esta semana no hay partido')+'</button></div>'+d7('match',null,ED.p.match,'warm')+'</div>'+
