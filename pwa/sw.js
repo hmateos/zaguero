@@ -10,10 +10,10 @@ self.addEventListener('fetch',e=>{
 });
 
 /* ---------- notificaciones ---------- */
-const NAMES={md1:'Torso · Fuerza',md4:'Pierna · Potencia',md3:'Torso · Volumen'};
+const NAMES={md1:'Torso · Fuerza',md5:'Explosivo · Core',md4:'Pierna · Potencia',md3:'Torso · Volumen'};
 const PH=[['Acumulación','5 reps al 75-80 %'],['Intensificación','4 reps al 80-85 %'],['Pico','3 reps al 85-88 %'],['Descarga','cargas bajas y una serie menos']];
 const D3=['lun','mar','mié','jue','vie','sáb','dom'];
-const DEF={gym:{md1:0,md4:2,md3:3},field:[1,3,4],match:6};
+const DEF={gym:{md1:0,md5:1,md4:2,md3:3},field:[1,3,4],match:6};
 const pad=n=>String(n).padStart(2,'0');
 const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
 const parseISO=s=>{const p=String(s).split('-').map(Number);return new Date(p[0],p[1]-1,p[2])};
@@ -33,10 +33,11 @@ function daysFromStart(S,date){return Math.round((date-mondayOf(parseISO(S.start
 const isMeasure=(S,d)=>{const x=daysFromStart(S,d);return x>=0&&x%28===0};
 const isTest=(S,d)=>{const x=daysFromStart(S,d);return x>=23&&(x-23)%28===0};
 function done(S,id,mon){const l=S.logs&&S.logs[iso(mon)+'|'+id];if(!l)return false;if(l.done)return true;const ex=l.ex||{};for(const i in ex){const e=ex[i];if(e&&e.sets&&e.sets.some(x=>x&&x.ok))return true}return false}
-const SHORT={md1:'torso 💪',md4:'pierna 🦵',md3:'torso y brazos 🔥'};
+const SHORT={md1:'torso 💪',md5:'explosivo y core 🎯',md4:'pierna 🦵',md3:'torso y brazos 🔥'};
 const pick=(arr,date,salt)=>arr[(Math.floor(date/864e5)+(salt||0))%arr.length];
 const POOL={
   md1:[['¡Hoy toca press! 💪','A por los kilos.'],['Hoy se carga arriba 🏋️','Pecho, espalda y hombros.'],['Torso pesado 🧱','Imposible de mover.']],
+  md5:[['Explosivo y core 🎯','Antes del entreno. Ligero y rápido.'],['Hoy se gana el pase 🎯','Saques y core. 45 minutos.'],['Martes de explosión ⚡','Fresco para el entreno.']],
   md4:[['Piernas de central 🦵','Hoy se gana el salto.'],['¡Hoy toca pierna! ⚡','Sin excusas.'],['Hoy se fabrica el salto 🚀','Cada serie cuenta.']],
   md3:[['¡Hoy toca bombear! 🔥','Torso y brazos.'],['Hombros y brazos 💥','Gym ahora, campo luego.'],['Hoy se gana tamaño 📈','Series de bombeo.']]
 };

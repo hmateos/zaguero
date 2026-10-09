@@ -550,7 +550,7 @@ var GYM={
         {n:'Hollow body',r:'30 s',c:'Tumbado, zona lumbar pegada al suelo, brazos y piernas estirados y despegados. Aguanta.'},
         {n:'Marcha con minibanda en los pies',r:'10 / pierna',c:'De pie o tumbado, sube una rodilla contra la goma y aguanta 1 s arriba.'}]}
     ]},
-  md3:{id:'md3',dayIdx:3,md:'MD-3',name:'Torso · Volumen',when:'Mañana · entreno a las 19:30',
+  md3:{id:'md3',dayIdx:3,md:'MD-3',name:'Torso · Volumen',when:'Jueves · 17:45, antes del entreno de 19:30',
     sub:'Hipertrofia de torso, cuello y core, sin carga en piernas.',
     warm:['5 min de remo suave','Dislocaciones con banda y rotación externa: 2 × 12','Retracciones escapulares colgado de la barra: 1 × 10','2 series de aproximación en el press militar'],
     slots:[
@@ -590,6 +590,23 @@ var GYM={
         {n:'Plancha lateral con elevación de cadera',c:'Cuerpo en línea. Sube y baja la cadera sin rotar.'},
         {n:'Paseo de maleta a una mano',r:'20 m / lado',c:'Mancuerna pesada en una mano y camina sin inclinarte hacia ningún lado. Hombros nivelados.'},
         {n:'Elevación lateral de tronco en banco romano',r:'12 / lado',c:'De lado en el banco de hiperextensiones. Baja controlado y sube sin girar.'}]}
+    ]},
+  md5:{id:'md5',dayIdx:1,md:'MD-5',name:'Explosivo · Core',when:'Martes · 17:45, antes del entreno de 19:30',
+    sub:'Torso explosivo y core, sin pierna y sin cargas pesadas: llegas fresco al entreno.',
+    warm:['5 min de bici suave','Dislocaciones con banda: 2 × 12','Rotación torácica en cuadrupedia: 8 por lado','Lanzamientos suaves contra la pared: 2 × 5'],
+    slots:[
+      {b:'E',s:'Lanzamiento',f:'Saques largos y pases de pecho: la fuerza sale del tronco y pasa al brazo.',sets:3,reps:'4',rest:60,v:[
+        {n:'Lanzamiento de balón medicinal de pecho',c:'Desde rodillas o de pie. Empuja explosivo contra la pared y recoge sin prisa.'},
+        {n:'Lanzamiento de balón medicinal sobre la cabeza',r:'4',c:'Como un saque de banda. Abdomen firme y empuje desde las piernas.'},
+        {n:'Slam de balón medicinal',r:'5',c:'Estírate arriba y lanza al suelo con todo el cuerpo.'}]},
+      {b:'K',s:'Core',f:'Un tronco firme para no perder el equilibrio en el choque y para pasar la fuerza de las piernas.',sets:3,reps:'10',rest:45,v:[
+        {n:'Pallof press con goma y paso lateral',r:'10 / lado',c:'Goma anclada a un poste. Brazos estirados y resiste el giro mientras das un paso.'},
+        {n:'Rueda abdominal',r:'8',c:'Pelvis en retroversión. No hundas la zona lumbar.'},
+        {n:'Plancha lateral con elevación de cadera',r:'10 / lado',c:'Cuerpo en línea. Sube y baja la cadera sin rotar.'}]},
+      {b:'C',s:'Hombro y brazos',f:'Hombro sano y brazos para el cuerpo a cuerpo y para el remate.',sets:2,reps:'12',rest:45,v:[
+        {n:'Elevación lateral tumbado',r:'12',c:'Tumbado de lado con mancuerna ligera. Sube hasta la altura del hombro sin encoger el cuello.'},
+        {n:'Curl martillo',r:'12',c:'Mancuernas con palmas enfrentadas. Baja despacio.'},
+        {n:'Press francés con mancuerna',r:'12',c:'Codos fijos. Baja la mancuerna hacia la frente.'}]}
     ]}
 };
 
@@ -623,7 +640,7 @@ var REFS=[
 /* ---------- estado ---------- */
 var S=load();
 function load(){
-  var d={start:'2026-10-12',offset:0,logs:{},plan:{gym:{md1:0,md4:2,md3:3},field:[1,3,4],match:6},weeks:{},rm:{},tests:[],meas:[],perf:[]};
+  var d={start:'2026-10-12',offset:0,logs:{},plan:{gym:{md1:0,md5:1,md4:2,md3:3},field:[1,3,4],match:6},weeks:{},rm:{},tests:[],meas:[],perf:[]};
   try{var r=JSON.parse(localStorage.getItem(KEY)||'null');if(r&&typeof r==='object'){for(var k in d){if(r[k]!==undefined)d[k]=r[k]}}}catch(e){}
   return d;
 }
@@ -670,6 +687,7 @@ function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;
 function curMon(){return mondayOf(today())}
 function keyOf(g){return iso(curMon())+'|'+g.id}
 function clonePlan(p){return JSON.parse(JSON.stringify(p))}
+var GYMPRE={4:{md1:0,md5:1,md4:2,md3:3},3:{md1:0,md4:2,md3:3},2:{md1:0,md4:2},1:{md4:2},0:{}};
 function planFor(mon){return S.weeks[iso(mon)]||S.plan}
 function dayOf(id,mon){return planFor(mon||curMon()).gym[id]}
 var DAYF=['lunes','martes','miércoles','jueves','viernes','sábado','domingo'];
@@ -696,11 +714,11 @@ function weekModel(mon){
 function whenOf(id){
   var p=planFor(curMon()),d=p.gym[id],md=mdLabel(d,p.match);
   if(!on(d))return 'Fuera esta semana';
-  return DAYF[d].charAt(0).toUpperCase()+DAYF[d].slice(1)+(md?' · '+md:'')+(p.field.indexOf(d)>-1?' · gimnasio por la mañana, entreno de equipo por la tarde':'');
+  return DAYF[d].charAt(0).toUpperCase()+DAYF[d].slice(1)+(md?' · '+md:'')+(p.field.indexOf(d)>-1?' · gimnasio antes del entreno de 19:30':'');
 }
-function gymOrder(mon,all){var p=planFor(mon||curMon());var a=['md1','md4','md3'].filter(function(id){return on(p.gym[id])}).sort(function(x,y){return p.gym[x]-p.gym[y]});if(all)['md1','md4','md3'].forEach(function(id){if(a.indexOf(id)<0)a.push(id)});return a}
+function gymOrder(mon,all){var p=planFor(mon||curMon());var a=['md1','md5','md4','md3'].filter(function(id){return on(p.gym[id])}).sort(function(x,y){return p.gym[x]-p.gym[y]});if(all)['md1','md5','md4','md3'].forEach(function(id){if(a.indexOf(id)<0)a.push(id)});return a}
 function planWarnings(p){
-  var w=[],days=[p.gym.md1,p.gym.md4,p.gym.md3].filter(on);
+  var w=[],days=[p.gym.md1,p.gym.md5,p.gym.md4,p.gym.md3].filter(on);
   if(new Set(days).size<days.length)w.push(['r','Dos sesiones el mismo día','Cada sesión necesita su día. Mueve una de ellas.']);
   var leg=p.gym.md4;
   if(!days.length)w.push(['a','Semana sin gimnasio','Si es por carga de partidos o descanso, está bien. Intenta que no sean dos semanas seguidas.']);
@@ -715,7 +733,7 @@ function planWarnings(p){
   }
   var sorted=days.slice().sort(function(a,b){return a-b});
   for(var i=0;i<2;i++){if(sorted[i+1]-sorted[i]===0)continue}
-  if(on(leg)&&p.field.indexOf(leg)>-1)w.push(['a','Pierna el mismo día que entrenas con el equipo','Haz el gimnasio por la mañana y deja al menos 6 horas antes del entreno.']);
+  if(on(leg)&&p.field.indexOf(leg)>-1)w.push(['a','Pierna el mismo día que entrenas con el equipo','La pierna necesita un día libre de entreno. Muévela a lunes o miércoles.']);
   if(!w.length||(w.length&&w.every(function(x){return x[0]==='g'})))w.push(['g','Semana bien colocada','La pierna queda lejos del partido y las sesiones tienen espacio para recuperar.']);
   return w;
 }
@@ -964,14 +982,14 @@ var PF=[['cmj','Salto vertical','cm',0],['broad','Salto horizontal','cm',0],['sp
 var MUS={
   cuello:{n:'Cuello',m:'cuello',s:[['md3','Trapecio y agarre']]},
   trapecio:{n:'Trapecio',m:null,s:[['md3','Trapecio y agarre'],['md1','Tirón pesado']]},
-  hombros:{n:'Hombros',m:'hombros',s:[['md1','Hombro'],['md3','Fuerza principal']]},
+  hombros:{n:'Hombros',m:'hombros',s:[['md1','Hombro'],['md3','Fuerza principal'],['md5','Hombro y brazos']]},
   pecho:{n:'Pecho',m:'pecho',s:[['md1','Fuerza principal'],['md1','Pecho'],['md3','Pecho']]},
-  biceps:{n:'Bíceps',m:'brazo',s:[['md1','Tirón pesado'],['md1','Brazos · estiramiento'],['md3','Brazos']]},
-  triceps:{n:'Tríceps',m:'brazo',s:[['md1','Brazos · estiramiento'],['md3','Brazos'],['md3','Fuerza principal']]},
+  biceps:{n:'Bíceps',m:'brazo',s:[['md1','Tirón pesado'],['md1','Brazos · estiramiento'],['md3','Brazos'],['md5','Hombro y brazos']]},
+  triceps:{n:'Tríceps',m:'brazo',s:[['md1','Brazos · estiramiento'],['md3','Brazos'],['md3','Fuerza principal'],['md5','Hombro y brazos']]},
   antebrazo:{n:'Antebrazo',m:'antebrazo',s:[['md3','Trapecio y agarre'],['md3','Tirón pesado'],['md3','Brazos']]},
   dorsal:{n:'Espalda',m:null,s:[['md1','Tirón pesado'],['md1','Espalda'],['md3','Dorsal'],['md3','Tirón pesado']]},
-  abdomen:{n:'Abdomen',m:'cintura',inv:true,s:[['md1','Antiextensión'],['md4','Flexor de cadera']]},
-  oblicuos:{n:'Oblicuos',m:null,s:[['md1','Lateral'],['md3','Rotación'],['md3','Lateral'],['md4','Antirrotación']]},
+  abdomen:{n:'Abdomen',m:'cintura',inv:true,s:[['md1','Antiextensión'],['md4','Flexor de cadera'],['md5','Core']]},
+  oblicuos:{n:'Oblicuos',m:null,s:[['md1','Lateral'],['md3','Rotación'],['md3','Lateral'],['md4','Antirrotación'],['md5','Core']]},
   lumbar:{n:'Lumbar',m:null,s:[['md4','Bisagra']]},
   gluteos:{n:'Glúteos',m:'gluteo',s:[['md4','Bisagra'],['md4','Una pierna']]},
   cuadriceps:{n:'Cuádriceps',m:'muslo',s:[['md4','Fuerza principal'],['md4','Una pierna'],['md4','Cuádriceps']]},
@@ -1190,7 +1208,7 @@ function blockOf(name){for(var id in GYM){var s=GYM[id].slots;for(var i=0;i<s.le
 
 /* ---------- plan ---------- */
 function vPlan(){
-  var c=ctx(),out=header()+'<h1 class="title">Plan</h1><div class="meta" style="margin-top:8px">Bloques de 4 semanas<i>·</i>3 sesiones<i>·</i>1 día de pierna</div>';
+  var c=ctx(),out=header()+'<h1 class="title">Plan</h1><div class="meta" style="margin-top:8px">Bloques de 4 semanas<i>·</i>'+(Object.keys(S.plan.gym).filter(function(k){return on(S.plan.gym[k])}).length)+(Object.keys(S.plan.gym).filter(function(k){return on(S.plan.gym[k])}).length===1?' sesión':' sesiones')+'<i>·</i>1 día de pierna</div>';
   out+='<div class="sec-h"><h2 class="h2">Bloque '+c.block+'</h2><span class="meta">Fuerza principal</span></div><div class="phases">'+PHASES.map(function(p,i){
     return '<div class="phr'+(i===c.pi?' on':'')+'"><span class="ix">S'+(i+1)+'</span><span class="nm">'+p.n+'</span><span class="v">'+p.reps+' reps · '+p.pct+'<br>RPE '+p.rpe+'</span></div>';
   }).join('')+'</div>';
@@ -1199,6 +1217,8 @@ function vPlan(){
     '<div class="explain" style="margin-top:14px"><p><b>Dentro del bloque, menos repeticiones y más peso.</b> La semana 1 haces 5 repeticiones al 75-80 %, la 2 haces 4 al 80-85 % y la 3 haces 3 al 85-88 %. Vas de más volumen a más intensidad, para que el cuerpo se acostumbre a cargas cada vez más pesadas. La semana 4 es de descarga y sirve para asimilar lo entrenado.</p>'+
     '<p><b>El bloque siguiente no vuelve atrás.</b> Repites el esquema de 5, 4 y 3 repeticiones, pero sobre un 1RM más alto, así que cada porcentaje pesa más que antes. Es una escalera: cada bloque empieza por encima del anterior.</p>'+
     '<p><b>Solo afecta a la fuerza principal.</b> Explotar, Construir y Blindar mantienen sus repeticiones. Ahí subes peso cuando completas todas las series con buena técnica.</p></div>';
+  var nDays=Object.keys(S.plan.gym).filter(function(k){return on(S.plan.gym[k])}).length;
+  out+='<div class="sec-h"><h2 class="h2">Días de gimnasio</h2><span class="meta">Semana habitual</span></div><div class="wkchips">'+[4,3,2,1,0].map(function(n){return '<button type="button" data-a="gymdays" data-n="'+n+'" aria-pressed="'+(n===nDays)+'">'+(n===0?'Ninguno':n+(n===1?' día':' días'))+'</button>'}).join('')+'</div><div class="meta" style="margin-top:8px">Cambia la semana habitual. Las semanas que aún no han empezado se ajustan a este número.</div>';
   out+='<div class="sec-h"><h2 class="h2">Tu semana</h2><button type="button" class="linkbtn" data-a="editweek">Editar días</button></div><div class="list">'+gymOrder(null,true).map(function(id){
     return '<div class="row'+(on(dayOf(id))?'':' off')+'" style="grid-template-columns:44px minmax(0,1fr)"><span class="mono" style="color:var(--acc)">'+(on(dayOf(id))?D1[dayOf(id)]:'—')+'</span><span><span class="nm" style="display:block">'+esc(GYM[id].name)+'</span><span class="sb" style="display:block">'+esc(whenOf(id))+'</span></span></div>';
   }).join('')+'</div>';
@@ -1253,7 +1273,7 @@ function renderEditor(){
   var html='<div class="scrim" data-a="edclose"><div class="modal" role="dialog" aria-label="Editar semana"><div class="grab"></div>'+
     '<h2 class="title" style="font-size:22px">Tu semana</h2><div class="meta" style="margin-top:6px">Toca un día para mover la sesión. Toca el día marcado para quitarla esa semana. Los códigos MD se recalculan según el partido.</div>'+
     '<div class="wkchips">'+chips+'</div>'+
-    ['md1','md4','md3'].map(function(id){var md=mdLabel(ED.p.gym[id],ED.p.match);
+    ['md1','md5','md4','md3'].map(function(id){var md=mdLabel(ED.p.gym[id],ED.p.match);
       return '<div class="ed"><div class="meta"><span>'+esc(GYM[id].name)+'</span><span class="mono">'+(on(ED.p.gym[id])?DAYF[ED.p.gym[id]]+(md?' · '+md:''):'No esta semana')+'</span></div>'+d7('gym',id,ED.p.gym[id],id==='md4'?'acc':'')+'</div>'}).join('')+
     '<div class="ed"><div class="meta"><span>Entrenos con el equipo</span><span class="mono">'+ED.p.field.length+' días</span></div>'+d7('field')+'</div>'+
     '<div class="ed"><div class="meta"><span>Partido</span><button type="button" class="linkbtn" style="padding:0" data-a="ed" data-k="nomatch">'+(ED.p.match===null?'Añadir partido':'Esta semana no hay partido')+'</button></div>'+d7('match',null,ED.p.match,'warm')+'</div>'+
@@ -1437,6 +1457,7 @@ document.addEventListener('click',function(ev){
     if(!tst.hop[0]&&!tst.ext[0]){toast('Rellena al menos una prueba con las dos piernas');return}
     S.tests=S.tests||[];S.tests=S.tests.filter(function(x){return x.d!==tst.d});S.tests.push(tst);save();render(false);toast('Test guardado');return}
   if(a==='edclose'){if(ev.target.closest('.modal'))return;ED=null;renderEditor();return}
+  if(a==='gymdays'){var n=Number(b.getAttribute('data-n'));S.plan=clonePlan(S.plan);S.plan.gym=clonePlan(GYMPRE[n]);var mon0=iso(curMon());Object.keys(S.weeks).forEach(function(k){if(k>=mon0)delete S.weeks[k]});save();render(false);toast(n===0?'Sin gimnasio en la semana habitual':'Semana habitual: '+n+(n===1?' día':' días'));return}
   if(a==='edwk'){var wk=b.getAttribute('data-w');ED={mon:wk,p:clonePlan(planFor(parseISO(wk)))};renderEditor();return}
   if(a==='ed'){
     var kd=b.getAttribute('data-k'),dd=Number(b.getAttribute('data-d'));
@@ -1479,7 +1500,7 @@ document.addEventListener('click',function(ev){
   if(a==='notitest'){notiTest();return}
   if(a==='noticopy'){var ta2=document.getElementById('subtxt');ta2.select();if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(NOTI.sub).then(function(){toast('Código copiado')},function(){toast('Texto seleccionado: cópialo a mano')})}else toast('Texto seleccionado: cópialo a mano');return}
   if(a==='wipe'){WIPE=!WIPE;render(false);return}
-  if(a==='wipeok'){S={start:S.start,offset:0,logs:{},plan:{gym:{md1:0,md4:2,md3:3},field:[1,3,4],match:6},weeks:{},rm:{},tests:[],meas:[],perf:[]};save();WIPE=false;render(false);toast('Datos borrados. Empiezas de cero');return}
+  if(a==='wipeok'){S={start:S.start,offset:0,logs:{},plan:{gym:{md1:0,md5:1,md4:2,md3:3},field:[1,3,4],match:6},weeks:{},rm:{},tests:[],meas:[],perf:[]};save();WIPE=false;render(false);toast('Datos borrados. Empiezas de cero');return}
   if(a==='bkrestore'){try{var o=JSON.parse(document.getElementById('bk').value);if(!o||typeof o!=='object'||!o.logs)throw 0;
     S={start:o.start||S.start,offset:o.offset||0,logs:o.logs};save();render(false);toast('Datos restaurados')}catch(err){toast('El texto no es una copia válida')}return}
   if(!P)return;

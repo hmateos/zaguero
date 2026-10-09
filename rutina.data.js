@@ -116,7 +116,7 @@ var GYM={
         {n:'Hollow body',r:'30 s',c:'Tumbado, zona lumbar pegada al suelo, brazos y piernas estirados y despegados. Aguanta.'},
         {n:'Marcha con minibanda en los pies',r:'10 / pierna',c:'De pie o tumbado, sube una rodilla contra la goma y aguanta 1 s arriba.'}]}
     ]},
-  md3:{id:'md3',dayIdx:3,md:'MD-3',name:'Torso · Volumen',when:'Mañana · entreno a las 19:30',
+  md3:{id:'md3',dayIdx:3,md:'MD-3',name:'Torso · Volumen',when:'Jueves · 17:45, antes del entreno de 19:30',
     sub:'Hipertrofia de torso, cuello y core, sin carga en piernas.',
     warm:['5 min de remo suave','Dislocaciones con banda y rotación externa: 2 × 12','Retracciones escapulares colgado de la barra: 1 × 10','2 series de aproximación en el press militar'],
     slots:[
@@ -156,6 +156,23 @@ var GYM={
         {n:'Plancha lateral con elevación de cadera',c:'Cuerpo en línea. Sube y baja la cadera sin rotar.'},
         {n:'Paseo de maleta a una mano',r:'20 m / lado',c:'Mancuerna pesada en una mano y camina sin inclinarte hacia ningún lado. Hombros nivelados.'},
         {n:'Elevación lateral de tronco en banco romano',r:'12 / lado',c:'De lado en el banco de hiperextensiones. Baja controlado y sube sin girar.'}]}
+    ]},
+  md5:{id:'md5',dayIdx:1,md:'MD-5',name:'Explosivo · Core',when:'Martes · 17:45, antes del entreno de 19:30',
+    sub:'Torso explosivo y core, sin pierna y sin cargas pesadas: llegas fresco al entreno.',
+    warm:['5 min de bici suave','Dislocaciones con banda: 2 × 12','Rotación torácica en cuadrupedia: 8 por lado','Lanzamientos suaves contra la pared: 2 × 5'],
+    slots:[
+      {b:'E',s:'Lanzamiento',f:'Saques largos y pases de pecho: la fuerza sale del tronco y pasa al brazo.',sets:3,reps:'4',rest:60,v:[
+        {n:'Lanzamiento de balón medicinal de pecho',c:'Desde rodillas o de pie. Empuja explosivo contra la pared y recoge sin prisa.'},
+        {n:'Lanzamiento de balón medicinal sobre la cabeza',r:'4',c:'Como un saque de banda. Abdomen firme y empuje desde las piernas.'},
+        {n:'Slam de balón medicinal',r:'5',c:'Estírate arriba y lanza al suelo con todo el cuerpo.'}]},
+      {b:'K',s:'Core',f:'Un tronco firme para no perder el equilibrio en el choque y para pasar la fuerza de las piernas.',sets:3,reps:'10',rest:45,v:[
+        {n:'Pallof press con goma y paso lateral',r:'10 / lado',c:'Goma anclada a un poste. Brazos estirados y resiste el giro mientras das un paso.'},
+        {n:'Rueda abdominal',r:'8',c:'Pelvis en retroversión. No hundas la zona lumbar.'},
+        {n:'Plancha lateral con elevación de cadera',r:'10 / lado',c:'Cuerpo en línea. Sube y baja la cadera sin rotar.'}]},
+      {b:'C',s:'Hombro y brazos',f:'Hombro sano y brazos para el cuerpo a cuerpo y para el remate.',sets:2,reps:'12',rest:45,v:[
+        {n:'Elevación lateral tumbado',r:'12',c:'Tumbado de lado con mancuerna ligera. Sube hasta la altura del hombro sin encoger el cuello.'},
+        {n:'Curl martillo',r:'12',c:'Mancuernas con palmas enfrentadas. Baja despacio.'},
+        {n:'Press francés con mancuerna',r:'12',c:'Codos fijos. Baja la mancuerna hacia la frente.'}]}
     ]}
 };
 
