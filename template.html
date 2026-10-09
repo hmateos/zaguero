@@ -1050,6 +1050,7 @@ function renderEditor(){
   var base=curMon(),chips='';
   for(var w=0;w<4;w++){var m=addDays(base,w*7),k=iso(m);chips+='<button type="button" data-a="edwk" data-w="'+k+'" aria-pressed="'+(k===ED.mon)+'">'+(w===0?'Esta semana':w===1?'La que viene':'Semana del '+m.getDate()+' '+MONTHS[m.getMonth()])+(S.weeks[k]?' ·':'')+'</button>'}
   function d7(kind,id,val,cls){return '<div class="d7 '+(cls||'')+'">'+D1.map(function(L,i){
+    if(kind==='gym'&&i===1&&val!==1)return '';
     var on=kind==='field'?ED.p.field.indexOf(i)>-1:val===i;
     return '<button type="button" data-a="ed" data-k="'+kind+'" data-id="'+(id||'')+'" data-d="'+i+'" aria-pressed="'+on+'" aria-label="'+DAYF[i]+'">'+L+'</button>'}).join('')+'</div>'}
   var html='<div class="scrim" data-a="edclose"><div class="modal" role="dialog" aria-label="Editar semana"><div class="grab"></div>'+
