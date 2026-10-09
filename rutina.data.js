@@ -157,22 +157,30 @@ var GYM={
         {n:'Paseo de maleta a una mano',r:'20 m / lado',c:'Mancuerna pesada en una mano y camina sin inclinarte hacia ningún lado. Hombros nivelados.'},
         {n:'Elevación lateral de tronco en banco romano',r:'12 / lado',c:'De lado en el banco de hiperextensiones. Baja controlado y sube sin girar.'}]}
     ]},
-  md5:{id:'md5',dayIdx:1,md:'MD+2',name:'Explosivo · Core',when:'Martes · 17:45, antes del entreno de 19:30',
-    sub:'Torso explosivo y core, sin pierna y sin cargas pesadas: llegas fresco al entreno.',
-    warm:['5 min de bici suave','Dislocaciones con banda: 2 × 12','Rotación torácica en cuadrupedia: 8 por lado','Lanzamientos suaves contra la pared: 2 × 5'],
+  md5:{id:'md5',dayIdx:1,md:'MD+2',name:'Torso · Explosivo',when:'Martes · 17:45, antes del entreno de 19:30',
+    sub:'Tren superior con potencia y volumen moderado. Sin pierna: llegas fresco al entreno.',
+    warm:['5 min de bici suave','Dislocaciones con banda: 2 × 12','Rotación torácica en cuadrupedia: 8 por lado','2 series de aproximación en el press'],
     slots:[
       {b:'E',s:'Lanzamiento',f:'Saques largos y pases de pecho: la fuerza sale del tronco y pasa al brazo.',sets:3,reps:'4',rest:60,v:[
         {n:'Lanzamiento de balón medicinal de pecho',c:'Desde rodillas o de pie. Empuja explosivo contra la pared y recoge sin prisa.'},
         {n:'Lanzamiento de balón medicinal sobre la cabeza',r:'4',c:'Como un saque de banda. Abdomen firme y empuje desde las piernas.'},
         {n:'Slam de balón medicinal',r:'5',c:'Estírate arriba y lanza al suelo con todo el cuerpo.'}]},
-      {b:'K',s:'Core',f:'Un tronco firme para no perder el equilibrio en el choque y para pasar la fuerza de las piernas.',sets:3,reps:'10',rest:45,v:[
-        {n:'Pallof press con goma y paso lateral',r:'10 / lado',c:'Goma anclada a un poste. Brazos estirados y resiste el giro mientras das un paso.'},
-        {n:'Rueda abdominal',r:'8',c:'Pelvis en retroversión. No hundas la zona lumbar.'},
-        {n:'Plancha lateral con elevación de cadera',r:'10 / lado',c:'Cuerpo en línea. Sube y baja la cadera sin rotar.'}]},
+      {b:'C',s:'Empuje',f:'Pecho y hombro para ganar el cuerpo a cuerpo y sostener la posición.',sets:3,reps:'8-10',rest:75,v:[
+        {n:'Press inclinado con mancuernas',c:'Ritmo de 3 s abajo y 1 s arriba.'},
+        {n:'Press landmine de pie con giro de cadera',r:'8 / lado',c:'Pie trasero gira, cadera rota y el brazo extiende.'},
+        {n:'Flexiones con disco a la espalda',r:'10-15',c:'Cuerpo rígido y pecho al suelo.'}]},
+      {b:'C',s:'Tirón',f:'Espalda que aguanta el empujón y tira del rival sin perder la posición.',sets:3,reps:'8-10',rest:75,v:[
+        {n:'Remo unilateral con mancuerna',r:'10 / lado',c:'Apoya una rodilla en el banco. Tira hacia la cadera y baja controlado.'},
+        {n:'Dominadas con agarre ancho',r:'8-10',c:'Pecho a la barra. Si no llegas a 8, usa una goma.'},
+        {n:'Remo T con landmine',r:'10',c:'De pie sobre la barra, agarre en V. Tira hacia el pecho.'}]},
       {b:'C',s:'Hombro y brazos',f:'Hombro sano y brazos para el cuerpo a cuerpo y para el remate.',sets:2,reps:'12',rest:45,v:[
         {n:'Elevación lateral tumbado',r:'12',c:'Tumbado de lado con mancuerna ligera. Sube hasta la altura del hombro sin encoger el cuello.'},
         {n:'Curl martillo',r:'12',c:'Mancuernas con palmas enfrentadas. Baja despacio.'},
-        {n:'Press francés con mancuerna',r:'12',c:'Codos fijos. Baja la mancuerna hacia la frente.'}]}
+        {n:'Press francés con mancuerna',r:'12',c:'Codos fijos. Baja la mancuerna hacia la frente.'}]},
+      {b:'K',s:'Core',f:'Un tronco firme para no perder el equilibrio en el choque.',sets:2,reps:'10',rest:45,v:[
+        {n:'Pallof press con goma y paso lateral',r:'10 / lado',c:'Goma anclada a un poste. Resiste el giro mientras das un paso.'},
+        {n:'Rueda abdominal',r:'8',c:'Pelvis en retroversión. No hundas la zona lumbar.'},
+        {n:'Plancha lateral con elevación de cadera',r:'10 / lado',c:'Cuerpo en línea. Sube y baja la cadera sin rotar.'}]}
     ]}
 };
 
