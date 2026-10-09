@@ -696,7 +696,7 @@ function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;
 function curMon(){return mondayOf(today())}
 function keyOf(g){return iso(curMon())+'|'+g.id}
 function clonePlan(p){return JSON.parse(JSON.stringify(p))}
-function assignGym(sel){var g={};if(sel.indexOf(0)>-1)g.md1=0;if(sel.indexOf(1)>-1)g.md5=1;if(sel.indexOf(2)>-1)g.md4=2;if(sel.indexOf(3)>-1)g.md3=3;return g}
+function assignGym(sel){var g={};if(sel.indexOf(0)>-1)g.md1=0;if(sel.indexOf(2)>-1)g.md4=2;if(sel.indexOf(3)>-1)g.md3=3;return g}
 function planFor(mon){return S.weeks[iso(mon)]||S.plan}
 function dayOf(id,mon){return planFor(mon||curMon()).gym[id]}
 var DAYF=['lunes','martes','miércoles','jueves','viernes','sábado','domingo'];
@@ -1228,7 +1228,7 @@ function vPlan(){
     '<p><b>Solo afecta a la fuerza principal.</b> Explotar, Construir y Blindar mantienen sus repeticiones. Ahí subes peso cuando completas todas las series con buena técnica.</p></div>';
   var selD=[];Object.keys(S.plan.gym).forEach(function(k){if(on(S.plan.gym[k])&&S.plan.gym[k]<4)selD.push(S.plan.gym[k])});
   var sesDesc=Object.keys(S.plan.gym).filter(function(k){return on(S.plan.gym[k])}).sort(function(x,y){return S.plan.gym[x]-S.plan.gym[y]}).map(function(k){var dn=DAYF[S.plan.gym[k]];return dn.charAt(0).toUpperCase()+dn.slice(1)+' · '+GYM[k].name}).join('<br>');
-  out+='<div class="sec-h"><h2 class="h2">Días que entrenas</h2><span class="meta">Semana habitual</span></div><div class="wkchips">'+[0,1,2,3].map(function(d){var dn=DAYF[d];return '<button type="button" data-a="gymday" data-d="'+d+'" aria-pressed="'+(selD.indexOf(d)>-1)+'">'+dn.charAt(0).toUpperCase()+dn.slice(1)+'</button>'}).join('')+'</div><div class="meta" style="margin-top:8px">'+(selD.length?sesDesc+(selD.indexOf(2)>-1?'':'<br>Sin pierna: marca el miércoles.'):'Sin gimnasio esta semana')+'</div>';
+  out+='<div class="sec-h"><h2 class="h2">Días que entrenas</h2><span class="meta">Semana habitual</span></div><div class="wkchips">'+[0,2,3].map(function(d){var dn=DAYF[d];return '<button type="button" data-a="gymday" data-d="'+d+'" aria-pressed="'+(selD.indexOf(d)>-1)+'">'+dn.charAt(0).toUpperCase()+dn.slice(1)+'</button>'}).join('')+'</div><div class="meta" style="margin-top:8px">'+(selD.length?sesDesc+(selD.indexOf(2)>-1?'':'<br>Sin pierna: marca el miércoles.'):'Sin gimnasio esta semana')+'</div>';
   out+='<div class="sec-h"><h2 class="h2">Tu semana</h2><button type="button" class="linkbtn" data-a="editweek">Editar días</button></div><div class="list">'+gymOrder(null,true).map(function(id){
     return '<div class="row'+(on(dayOf(id))?'':' off')+'" style="grid-template-columns:44px minmax(0,1fr)"><span class="mono" style="color:var(--acc)">'+(on(dayOf(id))?D1[dayOf(id)]:'—')+'</span><span><span class="nm" style="display:block">'+esc(GYM[id].name)+'</span><span class="sb" style="display:block">'+esc(whenOf(id))+'</span></span></div>';
   }).join('')+'</div>';
