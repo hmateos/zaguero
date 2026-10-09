@@ -467,7 +467,7 @@ function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;
 function curMon(){return mondayOf(today())}
 function keyOf(g){return iso(curMon())+'|'+g.id}
 function clonePlan(p){return JSON.parse(JSON.stringify(p))}
-var GYMPRE={4:{md1:0,md5:1,md4:2,md3:3},3:{md1:0,md4:2,md3:3},2:{md1:0,md4:2},1:{md4:2},0:{}};
+function assignGym(sel){var g={};if(sel.indexOf(0)>-1)g.md1=0;if(sel.indexOf(1)>-1)g.md5=1;if(sel.indexOf(2)>-1)g.md4=2;if(sel.indexOf(3)>-1)g.md3=3;return g}
 function planFor(mon){return S.weeks[iso(mon)]||S.plan}
 function dayOf(id,mon){return planFor(mon||curMon()).gym[id]}
 var DAYF=['lunes','martes','miércoles','jueves','viernes','sábado','domingo'];
@@ -997,8 +997,9 @@ function vPlan(){
     '<div class="explain" style="margin-top:14px"><p><b>Dentro del bloque, menos repeticiones y más peso.</b> La semana 1 haces 5 repeticiones al 75-80 %, la 2 haces 4 al 80-85 % y la 3 haces 3 al 85-88 %. Vas de más volumen a más intensidad, para que el cuerpo se acostumbre a cargas cada vez más pesadas. La semana 4 es de descarga y sirve para asimilar lo entrenado.</p>'+
     '<p><b>El bloque siguiente no vuelve atrás.</b> Repites el esquema de 5, 4 y 3 repeticiones, pero sobre un 1RM más alto, así que cada porcentaje pesa más que antes. Es una escalera: cada bloque empieza por encima del anterior.</p>'+
     '<p><b>Solo afecta a la fuerza principal.</b> Explotar, Construir y Blindar mantienen sus repeticiones. Ahí subes peso cuando completas todas las series con buena técnica.</p></div>';
-  var nDays=Object.keys(S.plan.gym).filter(function(k){return on(S.plan.gym[k])}).length;
-  out+='<div class="sec-h"><h2 class="h2">Días de gimnasio</h2><span class="meta">Semana habitual</span></div><div class="wkchips">'+[4,3,2,1,0].map(function(n){return '<button type="button" data-a="gymdays" data-n="'+n+'" aria-pressed="'+(n===nDays)+'">'+(n===0?'Ninguno':n+(n===1?' día':' días'))+'</button>'}).join('')+'</div><div class="meta" style="margin-top:8px">Cambia la semana habitual. Las semanas que aún no han empezado se ajustan a este número.</div>';
+  var selD=[];Object.keys(S.plan.gym).forEach(function(k){if(on(S.plan.gym[k])&&S.plan.gym[k]<4)selD.push(S.plan.gym[k])});
+  var sesDesc=Object.keys(S.plan.gym).filter(function(k){return on(S.plan.gym[k])}).sort(function(x,y){return S.plan.gym[x]-S.plan.gym[y]}).map(function(k){var dn=DAYF[S.plan.gym[k]];return dn.charAt(0).toUpperCase()+dn.slice(1)+' · '+GYM[k].name}).join('<br>');
+  out+='<div class="sec-h"><h2 class="h2">Días que entrenas</h2><span class="meta">Semana habitual</span></div><div class="wkchips">'+[0,1,2,3].map(function(d){var dn=DAYF[d];return '<button type="button" data-a="gymday" data-d="'+d+'" aria-pressed="'+(selD.indexOf(d)>-1)+'">'+dn.charAt(0).toUpperCase()+dn.slice(1)+'</button>'}).join('')+'</div><div class="meta" style="margin-top:8px">'+(selD.length?sesDesc+(selD.indexOf(2)>-1?'':'<br>Sin pierna: marca el miércoles.'):'Sin gimnasio esta semana')+'</div>';
   out+='<div class="sec-h"><h2 class="h2">Tu semana</h2><button type="button" class="linkbtn" data-a="editweek">Editar días</button></div><div class="list">'+gymOrder(null,true).map(function(id){
     return '<div class="row'+(on(dayOf(id))?'':' off')+'" style="grid-template-columns:44px minmax(0,1fr)"><span class="mono" style="color:var(--acc)">'+(on(dayOf(id))?D1[dayOf(id)]:'—')+'</span><span><span class="nm" style="display:block">'+esc(GYM[id].name)+'</span><span class="sb" style="display:block">'+esc(whenOf(id))+'</span></span></div>';
   }).join('')+'</div>';
@@ -1237,7 +1238,7 @@ document.addEventListener('click',function(ev){
     if(!tst.hop[0]&&!tst.ext[0]){toast('Rellena al menos una prueba con las dos piernas');return}
     S.tests=S.tests||[];S.tests=S.tests.filter(function(x){return x.d!==tst.d});S.tests.push(tst);save();render(false);toast('Test guardado');return}
   if(a==='edclose'){if(ev.target.closest('.modal'))return;ED=null;renderEditor();return}
-  if(a==='gymdays'){var n=Number(b.getAttribute('data-n'));S.plan=clonePlan(S.plan);S.plan.gym=clonePlan(GYMPRE[n]);var mon0=iso(curMon());Object.keys(S.weeks).forEach(function(k){if(k>=mon0)delete S.weeks[k]});save();render(false);toast(n===0?'Sin gimnasio en la semana habitual':'Semana habitual: '+n+(n===1?' día':' días'));return}
+  if(a==='gymday'){var d=Number(b.getAttribute('data-d'));var sel=[];Object.keys(S.plan.gym).forEach(function(k){if(on(S.plan.gym[k])&&S.plan.gym[k]<4)sel.push(S.plan.gym[k])});var at=sel.indexOf(d);if(at>-1)sel.splice(at,1);else sel.push(d);S.plan=clonePlan(S.plan);S.plan.gym=assignGym(sel);var mon0=iso(curMon());Object.keys(S.weeks).forEach(function(k){if(k>=mon0)delete S.weeks[k]});save();render(false);toast(sel.length?'Semana habitual actualizada':'Sin gimnasio en la semana habitual');return}
   if(a==='edwk'){var wk=b.getAttribute('data-w');ED={mon:wk,p:clonePlan(planFor(parseISO(wk)))};renderEditor();return}
   if(a==='ed'){
     var kd=b.getAttribute('data-k'),dd=Number(b.getAttribute('data-d'));

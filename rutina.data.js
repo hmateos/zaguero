@@ -157,7 +157,7 @@ var GYM={
         {n:'Paseo de maleta a una mano',r:'20 m / lado',c:'Mancuerna pesada en una mano y camina sin inclinarte hacia ningún lado. Hombros nivelados.'},
         {n:'Elevación lateral de tronco en banco romano',r:'12 / lado',c:'De lado en el banco de hiperextensiones. Baja controlado y sube sin girar.'}]}
     ]},
-  md5:{id:'md5',dayIdx:1,md:'MD-5',name:'Explosivo · Core',when:'Martes · 17:45, antes del entreno de 19:30',
+  md5:{id:'md5',dayIdx:1,md:'MD+2',name:'Explosivo · Core',when:'Martes · 17:45, antes del entreno de 19:30',
     sub:'Torso explosivo y core, sin pierna y sin cargas pesadas: llegas fresco al entreno.',
     warm:['5 min de bici suave','Dislocaciones con banda: 2 × 12','Rotación torácica en cuadrupedia: 8 por lado','Lanzamientos suaves contra la pared: 2 × 5'],
     slots:[
