@@ -899,7 +899,7 @@ function measHist(){
   var arr=(S.meas||[]).slice().sort(function(a,b){return a.d<b.d?1:-1});
   return '<div class="sec-h" style="margin-top:18px"><h2 class="h2">Tus medidas</h2><span class="meta">'+arr.length+(arr.length===1?' registro':' registros')+'</span></div><div class="list">'+arr.map(function(m){
     var parts=MF.filter(function(f){return m[f[0]]!==undefined}).map(function(f){return f[1]+' '+String(m[f[0]]).replace('.',',')+' '+f[2]});
-    return '<div class="row" style="grid-template-columns:1fr"><span><span class="nm" style="display:block">'+fmtD(m.d)+'</span><span class="sb" style="display:block">'+esc(parts.join(' · '))+'</span></span></div>'}).join('')+'</div>';
+    return '<div class="row" '+(DEMO?'':'data-a="editmeas" data-d="'+m.d+'" style="cursor:pointer;grid-template-columns:1fr"')+(DEMO?' style="grid-template-columns:1fr"':'')+'><span><span class="nm" style="display:block">'+fmtD(m.d)+'</span><span class="sb" style="display:block">'+esc(parts.join(' · '))+'</span></span></div>'}).join('')+'</div>';
 }
 function pgCuerpo(){
   var pw=series(S.meas,'peso'),last=pw[pw.length-1],gw=growth(pw),ws=weekSessions(),bars='';
@@ -966,15 +966,16 @@ function pgPotencia(){
 }
 
 /* formularios de medidas y tests */
-function openForm(kind){FORM={kind:kind};renderForm()}
+function openForm(kind,d){FORM={kind:kind,d:d||null};renderForm()}
 function renderForm(){
   var host=document.getElementById('forml');
   if(!FORM){host.innerHTML='';return}
   var meas=FORM.kind==='meas',fields=meas?MF:PF,arr=(meas?S.meas:S.perf)||[];
   var last=arr.slice().sort(function(a,b){return a.d<b.d?-1:1}).pop()||{};
+  var dd=FORM.d||iso(today()),ent=FORM.d?(arr.filter(function(x){return x.d===FORM.d})[0]||{}):{};
   host.innerHTML='<div class="scrim" data-a="formclose"><div class="modal" role="dialog" aria-label="'+(meas?'Medidas':'Test de potencia')+'"><div class="grab"></div>'+
-    '<h2 class="title" style="font-size:22px">'+(meas?'Medidas del mes':'Test de potencia')+'</h2><div class="meta" style="margin-top:6px">'+fmtD(iso(today()))+'. Deja vacío lo que no midas.</div>'+
-    '<div class="formgrid">'+fields.map(function(f){return '<label for="fm-'+f[0]+'">'+f[1]+'<small>'+(last[f[0]]?'Última: '+fmtN(last[f[0]],f[2])+' '+f[2]:f[2])+'</small></label><input id="fm-'+f[0]+'" inputmode="decimal" placeholder="'+f[2]+'">'}).join('')+'</div>'+
+    '<h2 class="title" style="font-size:22px">'+(FORM.d?'Editar medidas':meas?'Medidas del mes':'Test de potencia')+'</h2><div class="meta" style="margin-top:6px">'+fmtD(dd)+'. Deja vacío lo que no midas.</div>'+
+    '<div class="formgrid">'+fields.map(function(f){return '<label for="fm-'+f[0]+'">'+f[1]+'<small>'+(last[f[0]]?'Última: '+fmtN(last[f[0]],f[2])+' '+f[2]:f[2])+'</small></label><input id="fm-'+f[0]+'" inputmode="decimal" placeholder="'+f[2]+'"'+(ent[f[0]]!==undefined?' value="'+String(ent[f[0]]).replace('.',',')+'"':'')+'>'}).join('')+'</div>'+
     '<p class="meta" style="margin:16px 0 0">'+(meas?'Mídete por la mañana, en ayunas y antes de entrenar. Cinta ajustada sin apretar. Brazo contraído en la parte más ancha. Muslo a mitad entre cadera y rodilla. Cintura a la altura del ombligo. Pecho a la altura de los pezones, tras soltar el aire.':'Calienta bien antes. Mejor de 3 saltos y mejor de 2 sprints, siempre en el mismo sitio.')+'</p>'+
     '<div class="btnrow"><button type="button" class="pill white" data-a="formsave">Guardar</button></div></div></div>';
 }
@@ -1234,9 +1235,10 @@ document.addEventListener('click',function(ev){
   if(a==='perfsel'){PG.perf=b.getAttribute('data-v');render(false);return}
   if(a==='demo'){DEMO=!DEMO;DEMO_S=null;render(false);return}
   if(a==='form'){openForm(b.getAttribute('data-k'));return}
+  if(a==='editmeas'){if(DEMO){toast('Sal del ejemplo para editar');return}openForm('meas',b.getAttribute('data-d'));return}
   if(a==='formclose'){if(ev.target.closest('.modal'))return;FORM=null;renderForm();return}
   if(a==='formsave'){
-    var meas=FORM.kind==='meas',fl=meas?MF:PF,en={d:iso(today())},cnt=0;
+    var meas=FORM.kind==='meas',fl=meas?MF:PF,en={d:FORM.d||iso(today())},cnt=0;
     fl.forEach(function(f){var v=parseFloat(String(document.getElementById('fm-'+f[0]).value).replace(',','.'));if(v>0){en[f[0]]=v;cnt++}});
     if(!cnt){toast('Rellena al menos un dato');return}
     var key=meas?'meas':'perf';S[key]=(S[key]||[]).filter(function(x){return x.d!==en.d});S[key].push(en);save();
