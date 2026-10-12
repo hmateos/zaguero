@@ -895,6 +895,12 @@ function vProgreso(){
   out+=PG.tab==='cuerpo'?pgCuerpo():PG.tab==='fuerza'?pgFuerza():pgPotencia();
   return out;
 }
+function measHist(){
+  var arr=(S.meas||[]).slice().sort(function(a,b){return a.d<b.d?1:-1});
+  return '<div class="sec-h" style="margin-top:18px"><h2 class="h2">Tus medidas</h2><span class="meta">'+arr.length+(arr.length===1?' registro':' registros')+'</span></div><div class="list">'+arr.map(function(m){
+    var parts=MF.filter(function(f){return m[f[0]]!==undefined}).map(function(f){return f[1]+' '+String(m[f[0]]).replace('.',',')+' '+f[2]});
+    return '<div class="row" style="grid-template-columns:1fr"><span><span class="nm" style="display:block">'+fmtD(m.d)+'</span><span class="sb" style="display:block">'+esc(parts.join(' · '))+'</span></span></div>'}).join('')+'</div>';
+}
 function pgCuerpo(){
   var pw=series(S.meas,'peso'),last=pw[pw.length-1],gw=growth(pw),ws=weekSessions(),bars='';
   for(var d=0;d<3;d++)bars+='<i class="'+(d<ws.week?'on':'')+'"></i>';
@@ -910,6 +916,7 @@ function pgCuerpo(){
   out+=musPanel(PG.mus);
   if(!DEMO)out+='<p class="meta" style="margin:16px 4px 0">Próxima medición: <span style="color:var(--fg)">'+nextMeasure()+'</span>. Al empezar cada bloque, por la mañana, en ayunas y antes de entrenar.</p>';
   if(!DEMO)out+='<button type="button" class="pill white" style="margin-top:12px" data-a="form" data-k="meas">Registrar medidas del mes</button>';
+  if((S.meas||[]).length)out+=measHist();
   if((S.meas||[]).length)out+='<p class="meta" style="margin:10px 4px 0">Última medición: '+fmtD(S.meas.slice().sort(function(a,b){return a.d<b.d?-1:1}).pop().d)+'. Mídete una vez al mes, siempre en las mismas condiciones.</p>';
   return out;
 }
