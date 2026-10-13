@@ -43,19 +43,19 @@ var GYM={
         {n:'Fondos lastrados',c:'Torso algo inclinado hacia delante. Baja hasta que el hombro quede a la altura del codo.'},
         {n:'Press landmine de pie a una mano',r:'10 / lado',c:'Empuja en diagonal con la cadera quieta. Trabaja pecho, hombro y core a la vez.'}]},
       {b:'C',s:'Espalda',f:'Equilibra todo el empuje y protege el hombro en caídas y choques.',sets:3,reps:'10-12',rest:75,v:[
-        {n:'Remo Meadows con landmine',r:'10 / lado',c:'Barra en esquina, agarre del extremo, de pie y en bisagra. Tira del codo hacia arriba y atrás sin girar el tronco.'},
+        {n:'Remo Meadows con landmine (unilateral)',r:'10 / lado',c:'Barra en esquina, agarre del extremo, de pie y en bisagra. Tira del codo hacia arriba y atrás sin girar el tronco.'},
         {n:'Remo con pecho apoyado',c:'Sin impulso. Pausa de 1 s con las escápulas juntas.'},
         {n:'Remo con mancuerna a una mano en zancada',r:'10 / lado',c:'De pie en zancada, mano libre en la rodilla delantera. Tira hacia la cadera sin rotar: espalda y antirrotación a la vez.'}]},
       {b:'C',s:'Hombro',f:'Hombros anchos y sanos: presencia física y protección cuando caes.',sets:3,reps:'12-15',rest:60,v:[
         {n:'Elevación lateral sentado con mancuernas',c:'Sentado en el banco, espalda recta. Sin impulso de piernas, todo el trabajo lo hace el hombro. El hombro ancho da presencia en el campo.'},
-        {n:'Elevación lateral con mancuernas',c:'Sube a la altura del hombro con el codo algo flexionado.'},
+        {n:'Elevación lateral de pie con mancuernas',c:'Sube a la altura del hombro con el codo algo flexionado.'},
         {n:'Pájaros con pecho apoyado en banco inclinado',c:'Pecho sobre el banco, abre los brazos hacia los lados con los codos algo flexionados. Deltoides posterior y salud del hombro.'}]},
       {b:'C',s:'Bíceps en estiramiento',f:'Bíceps largo y codos sanos. Aquí manda la estética, no la transferencia directa.',sets:2,reps:'10-12',rest:60,v:[
         {n:'Curl inclinado con mancuernas',c:'Banco a 45°, brazos colgando detrás del cuerpo. Sube sin balancearte y baja lento.'},
         {n:'Curl predicador con barra Z',c:'Baja el curl hasta estirar del todo, sin soltar la tensión.'},
         {n:'Curl Zottman',c:'Sube en supino y baja en prono: trabajas bíceps y antebrazo.'}]},
       {b:'C',s:'Tríceps en estiramiento',f:'Tríceps largo: la parte del brazo que más aporta a su tamaño.',sets:2,reps:'10-12',rest:60,v:[
-        {n:'Extensión de tríceps sobre la cabeza',c:'Mancuerna por detrás de la cabeza, codos apuntando al techo. Baja hasta sentir el estiramiento.'},
+        {n:'Extensión de tríceps tras la nuca (unilateral)',c:'Mancuerna por detrás de la cabeza, codos apuntando al techo. Baja hasta sentir el estiramiento.'},
         {n:'Fondos en banco',c:'Espalda pegada al banco y codos hacia atrás. Baja controlado.'},
         {n:'Extensión de tríceps tumbado con mancuernas',c:'Codos fijos apuntando al techo. Baja hasta la frente.'}]},
       {b:'B',s:'Aductor',f:'La ingle es de las lesiones más comunes del fútbol y el central la carga en cada cambio de dirección.',sets:2,reps:'6-8 / lado',rest:60,v:[

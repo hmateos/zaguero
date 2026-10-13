@@ -277,6 +277,8 @@ textarea#bk{width:100%;min-height:90px;border-radius:12px;border:1px solid var(-
 .rvex{padding:12px 0;border-bottom:1px solid var(--line)}
 .rvname{font-size:15px;color:var(--fg);margin-bottom:6px}
 .rvrow{display:flex;gap:6px;align-items:center;margin:6px 0;font-size:13px;color:var(--mute)}
+.hname{width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--s1);color:var(--fg);font:inherit;margin-bottom:6px}
+.hchk{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--mute);margin-bottom:6px}
 .rvrow input{width:64px;padding:8px;border-radius:10px;border:1px solid var(--line);background:var(--s1);color:var(--fg);font:inherit;text-align:center}
 .wkchips{display:flex;gap:6px;overflow-x:auto;margin:16px -20px 0;padding:0 20px 4px}
 .wkchips button{flex:none;height:34px;padding-inline:14px;border-radius:999px;background:var(--s2);font:500 12px/1 var(--f-ui);color:var(--mute);white-space:nowrap}
@@ -929,10 +931,10 @@ function pgHistorial(){
     if(l.warmSkip)body.push('Calentamiento: no realizado');
     Object.keys(l.ex||{}).sort(function(x,y){return Number(x)-Number(y)}).forEach(function(i){
       var e=l.ex[i];if(!e||!e.sets)return;
-      var sets=e.sets.filter(Boolean).map(function(x){return x.skip?'no realizado':fmtKg(x.kg||0)+' kg × '+(x.reps||0)});
+      var sets=e.sets.filter(Boolean).map(function(x){return x.skip?'no realizado':setTxt(e.n||'',x)});
       if(sets.length)body.push(esc((e.n||'Ejercicio')+': ')+esc(sets.join(' · ')));
     });
-    return '<div class="row" style="grid-template-columns:1fr"><span><span class="nm" style="display:block">'+esc((g?g.name:'Entrenamiento')+' · '+date)+'</span><span class="sb" style="display:block;line-height:1.7">'+body.join('<br>')+'</span></span></div>';
+    return '<div class="row" data-a="histedit" data-k="'+esc(k)+'" style="grid-template-columns:1fr;cursor:pointer"><span><span class="nm" style="display:block">'+esc((g?g.name:'Entrenamiento')+' · '+date)+'</span><span class="sb" style="display:block;line-height:1.7">'+body.join('<br>')+'</span></span></div>';
   }).join('')+'</div>';
 }
 function pgCuerpo(){
@@ -1156,8 +1158,9 @@ function loadVals(){
   P.vals={kg:cur&&cur.kg?cur.kg:(sg||(pre&&pre.kg?pre.kg:0)),reps:cur&&cur.reps?cur.reps:firstNum(repsOf(sl,va,c))};
 }
 function closePlayer(){P=null;stopTicker();document.getElementById('layer').innerHTML='';document.body.style.overflow='';render(false)}
+function durOf(l){return l&&l.t0?((l.tEnd||Date.now())-l.t0)/1000:0}
 function plTop(){
-  var l=S.logs[P.k],el=l&&l.t0?(Date.now()-l.t0)/1000:0,order=[],seen={};
+  var l=S.logs[P.k],el=durOf(l),order=[],seen={};
   P.q.forEach(function(st){if(!seen[st.i]){seen[st.i]=1;order.push(st.i)}});
   var curI=P.pos<P.q.length?P.q[P.pos].i:-1,c=ctx();
   var segs=order.map(function(i){var n=nSets(P.g.slots[i],c.pi),d=Math.min(okCount(exOf(P.k,i)),n),w=Math.round(d/n*100);if(i===curI&&w===0)w=4;
@@ -1177,7 +1180,8 @@ function renderPlayer(){
       '<div class="warmlist">'+g.warm.map(function(t,i){return '<button type="button" class="wi" data-a="warm" data-i="'+i+'" aria-pressed="'+!!w[i]+'"><span class="bx">'+I.check+'</span><span>'+esc(t)+'</span></button>'}).join('')+'</div>'+
       '<div style="padding:16px 18px 18px"><button type="button" class="pill white" data-a="warmgo">Empezar ejercicios</button><button type="button" class="linkbtn" data-a="warmskip" style="display:block;margin:12px auto 0">No hago el calentamiento</button></div></div>';
   }else if(P.phase==='done'){
-    var l2=S.logs[P.k],dur=l2&&l2.t0?(Date.now()-l2.t0)/1000:0,sets=0,vol=0;
+    var l2=S.logs[P.k];if(l2&&l2.t0&&!l2.tEnd){l2.tEnd=Date.now();save()}
+    var dur=durOf(l2),sets=0,vol=0;
     Object.keys(l2.ex||{}).forEach(function(i){var e=l2.ex[i];(e.sets||[]).forEach(function(x){if(x&&x.ok&&!x.skip){sets++;vol+=(x.kg||0)*(x.reps||0)}})});
     out+='<div class="stage"><div class="media">'+mediaFor('','F')+'</div><div class="summary"><div class="set mono" style="color:var(--acc);font-size:12px;margin-bottom:10px">'+(mdOf(g.id)?mdOf(g.id)+' · ':'')+esc(g.name)+'</div><h2 class="slogan">Sesión<br>completada.</h2>'+
       '<div class="sumgrid"><div><div class="meta">Tiempo</div><div class="big">'+Math.round(dur/60)+'<small>min</small></div></div><div><div class="meta">Series</div><div class="big">'+sets+'</div></div><div><div class="meta">Volumen</div><div class="big">'+fmtKg(vol/1000)+'<small>t</small></div></div></div>'+
@@ -1198,7 +1202,7 @@ function renderPlayer(){
         (med(va.n)&&med(va.n).fe?feAnim(med(va.n).fe,'inplayer'):'')+
         '<p class="cue">'+(sl.f?'<span class="fieldlbl">En el campo</span><span class="ftxt">'+esc(sl.f)+'</span>':'')+esc(va.c)+'</p>'+
         '<div class="nums"><div class="num"><input id="pl-reps" inputmode="numeric" aria-label="'+unitOf(reps)+'" value="'+P.vals.reps+'"><div class="u">'+unitOf(reps)+'</div><div class="step"><button type="button" data-a="adj" data-f="reps" data-d="-1" aria-label="Menos repeticiones">−</button><button type="button" data-a="adj" data-f="reps" data-d="1" aria-label="Más repeticiones">+</button></div></div>'+
-        (sl.b==='R'?'<div></div>':'<div class="num r"><input id="pl-kg" inputmode="decimal" aria-label="Peso en kilos" value="'+fmtKg(P.vals.kg)+'"><div class="u">Peso · kg</div><div class="step"><button type="button" data-a="adj" data-f="kg" data-d="-2.5" aria-label="Menos peso">−</button><button type="button" data-a="adj" data-f="kg" data-d="2.5" aria-label="Más peso">+</button></div></div>')+'</div></div>'+
+        (sl.b==='R'||isNoKg(va.n)?'<div></div>':'<div class="num r"><input id="pl-kg" inputmode="decimal" aria-label="Peso en kilos" value="'+fmtKg(P.vals.kg)+'"><div class="u">'+(isUni(va.n)?'Peso por brazo · kg':isBw(va.n)?'Peso extra · kg':'Peso · kg')+'</div><div class="step"><button type="button" data-a="adj" data-f="kg" data-d="-2.5" aria-label="Menos peso">−</button><button type="button" data-a="adj" data-f="kg" data-d="2.5" aria-label="Más peso">+</button></div></div>')+'</div></div>'+
         '<button type="button" class="pill white done-btn" data-a="setdone">Serie hecha</button><button type="button" class="linkbtn" data-a="plskip" style="display:block;margin:10px auto 0">No realizo este ejercicio</button>';
     }
     if(P.phase==='rest'){out+='<div class="next"><b>Ahora</b>→<span>'+esc(va.n)+' · serie '+(st.s+1)+'</span></div>'}
@@ -1210,7 +1214,7 @@ function renderPlayer(){
 var tk=null;
 function startTicker(){stopTicker();tk=setInterval(function(){
   if(!P)return;
-  var l=S.logs[P.k],t=document.getElementById('plt');if(t&&l&&l.t0)t.textContent=mmss((Date.now()-l.t0)/1000);
+  var l=S.logs[P.k],t=document.getElementById('plt');if(t&&l&&l.t0)t.textContent=mmss(durOf(l));
   if(P.phase==='rest'){
     var left=(P.restEnd-Date.now())/1000;
     if(left<=0){try{navigator.vibrate&&navigator.vibrate([180,90,180])}catch(e){}P.phase='set';loadVals();renderPlayer();return}
@@ -1245,6 +1249,47 @@ function skipEx(){
   if(nx<0){P.pos=P.q.length;P.phase='done';renderPlayer();return}
   P.pos=nx;P.phase='set';loadVals();renderPlayer();
 }
+function isUni(n){return /\(unilateral\)/i.test(n||'')}
+function isBw(n){return /dominada|fondo/i.test(n||'')}
+function isNoKg(n){return /rueda abdominal/i.test(n||'')}
+function setTxt(n,x){if(isNoKg(n))return (x.reps||0)+' reps';if(isBw(n)&&!x.kg)return 'peso corporal';return fmtKg(x.kg||0)+(isUni(n)?' kg por brazo':' kg')+' × '+(x.reps||0)}
+var HE=null;
+function histSets(e){return (e.sets||[]).map(function(x,s){return x?{x:x,s:s}:null}).filter(Boolean)}
+function renderHist(){
+  var host=document.getElementById('forml');
+  if(!HE){host.innerHTML='';return}
+  var l=S.logs[HE.k];if(!l){HE=null;host.innerHTML='';return}
+  var pipe=HE.k.indexOf('|'),g=GYM[HE.k.slice(pipe+1)],date=l.d?fmtD(l.d):fmtD(HE.k.slice(0,pipe));
+  var exs=Object.keys(l.ex||{}).sort(function(a,b){return Number(a)-Number(b)}).map(function(i){
+    var e=l.ex[i],nm=e.n||'Ejercicio',uni=isUni(nm),allSkip=(e.sets||[]).length&&(e.sets||[]).every(function(x){return !x||x.skip});
+    return '<div class="rvex"><input class="hname" id="he-n-'+i+'" value="'+esc(nm)+'"><label class="hchk"><input type="checkbox" id="he-skip-'+i+'"'+(allSkip?' checked':'')+'> No realizado</label>'+
+      (e.sets||[]).map(function(x,s){if(!x)return '';return '<div class="rvrow"><span>Serie '+(s+1)+'</span>'+(isNoKg(nm)?'<span></span>':'<input id="he-kg-'+i+'-'+s+'" inputmode="decimal" value="'+fmtKg(x.kg||0)+'"><span>'+(uni?'kg/brazo':'kg')+'</span>')+'<input id="he-rp-'+i+'-'+s+'" inputmode="numeric" value="'+(x.reps||0)+'"><span>reps</span></div>'}).join('')+
+      '<button type="button" class="linkbtn" data-a="hadd" data-i="'+i+'">+ añadir serie</button></div>';
+  }).join('');
+  host.innerHTML='<div class="scrim" data-a="hcancel"><div class="modal" role="dialog" aria-label="Corregir entrenamiento"><div class="grab"></div>'+
+    '<h2 class="title" style="font-size:22px">Corregir entrenamiento</h2><div class="meta" style="margin-top:6px">'+esc((g?g.name:'Entrenamiento')+' · '+date)+'</div>'+
+    '<div class="hchk" style="margin-top:12px"><input type="checkbox" id="he-warm"'+(l.warmSkip?' checked':'')+'> Calentamiento no realizado</div>'+
+    '<div class="rvrow" style="margin-top:8px"><span>Duración</span><input id="he-dur" inputmode="numeric" value="'+(l.t0?Math.round(durOf(l)/60):'')+'"><span>min</span></div>'+
+    '<div class="rvlist" style="max-height:52vh">'+exs+'</div>'+
+    '<button type="button" class="linkbtn" data-a="hnew">+ añadir ejercicio</button>'+
+    '<div class="btnrow"><button type="button" class="pill white" data-a="hsave">Guardar cambios</button></div></div></div>';
+}
+function collectHist(){
+  var l=S.logs[HE.k];if(!l)return;
+  var w=document.getElementById('he-warm');if(w)l.warmSkip=!!w.checked;
+  var du=document.getElementById('he-dur');if(du&&l.t0&&du.value.trim()!==''){var mins=parseInt(du.value,10);if(mins>=0){l.tEnd=l.t0+mins*60000}}
+  Object.keys(l.ex||{}).forEach(function(i){
+    var nEl=document.getElementById('he-n-'+i);if(!nEl)return;
+    var e=l.ex[i];e.n=nEl.value.trim()||e.n;
+    var skip=document.getElementById('he-skip-'+i);var isSkip=!!(skip&&skip.checked);
+    e.sets=(e.sets||[]).map(function(x,s){
+      var kgEl=document.getElementById('he-kg-'+i+'-'+s),rpEl=document.getElementById('he-rp-'+i+'-'+s);
+      if(!rpEl)return x;
+      if(isSkip)return {kg:0,reps:0,ok:true,skip:true};
+      return {kg:kgEl?parseFloat(String(kgEl.value).replace(',','.'))||0:0,reps:parseInt(rpEl.value,10)||0,ok:true};
+    });
+  });
+}
 function reviewHtml(){
   var seen={},rows='';
   P.q.forEach(function(st){
@@ -1254,7 +1299,8 @@ function reviewHtml(){
     rows+='<div class="rvex"><div class="rvname">'+esc(nm)+'</div>'+e.sets.map(function(x,s){
       if(!x)return '';
       if(x.skip)return '<div class="rvrow"><span>Serie '+(s+1)+'</span><span>No realizado</span></div>';
-      return '<div class="rvrow"><span>Serie '+(s+1)+'</span><input id="rv-kg-'+st.i+'-'+s+'" inputmode="decimal" value="'+fmtKg(x.kg||0)+'"><span>kg</span><input id="rv-rp-'+st.i+'-'+s+'" inputmode="numeric" value="'+(x.reps||0)+'"><span>reps</span></div>';
+      if(isNoKg(nm))return '<div class="rvrow"><span>Serie '+(s+1)+'</span><span></span><input id="rv-rp-'+st.i+'-'+s+'" inputmode="numeric" value="'+(x.reps||0)+'"><span>reps</span></div>';
+      return '<div class="rvrow"><span>Serie '+(s+1)+'</span><input id="rv-kg-'+st.i+'-'+s+'" inputmode="decimal" value="'+fmtKg(x.kg||0)+'"><span>'+(isUni(nm)?'kg/brazo':'kg')+'</span><input id="rv-rp-'+st.i+'-'+s+'" inputmode="numeric" value="'+(x.reps||0)+'"><span>reps</span></div>';
     }).join('')+'</div>';
   });
   if(!rows)rows='<p class="meta">Todavía no hay series registradas.</p>';
@@ -1267,7 +1313,7 @@ function saveReview(){
     var e=exOf(P.k,st.i);if(!e||!e.sets)return;
     e.sets.forEach(function(x,s){
       var kg=document.getElementById('rv-kg-'+st.i+'-'+s),rp=document.getElementById('rv-rp-'+st.i+'-'+s);
-      if(x&&kg&&rp){x.kg=parseFloat(String(kg.value).replace(',','.'))||0;x.reps=parseInt(rp.value,10)||0}
+      if(x&&rp){if(kg)x.kg=parseFloat(String(kg.value).replace(',','.'))||0;x.reps=parseInt(rp.value,10)||0}
     });
   });
   save();P.phase='done';renderPlayer();
@@ -1295,6 +1341,11 @@ document.addEventListener('keydown',function(ev){if((ev.key==='Enter'||ev.key===
 document.addEventListener('click',function(ev){
   var b=ev.target.closest('[data-a]');if(!b)return;
   var a=b.getAttribute('data-a'),c=ctx();
+  if(a==='histedit'){HE={k:b.getAttribute('data-k')};renderHist();return}
+  if(a==='hcancel'){if(ev.target.closest('.modal'))return;HE=null;renderHist();return}
+  if(a==='hsave'){collectHist();save();HE=null;renderHist();render(false);return}
+  if(a==='hadd'){collectHist();var ha=S.logs[HE.k].ex[b.getAttribute('data-i')];ha.sets.push({kg:0,reps:0,ok:true});save();renderHist();return}
+  if(a==='hnew'){collectHist();var hl=S.logs[HE.k];hl.ex=hl.ex||{};var keys=Object.keys(hl.ex).map(Number);var ni=keys.length?Math.max.apply(null,keys)+1:0;hl.ex[ni]={n:'Nuevo ejercicio',sets:[{kg:0,reps:0,ok:true}]};save();renderHist();return}
   if(a==='editweek'){openEditor();return}
   if(a==='pgtab'){PG.tab=b.getAttribute('data-v');render(false);return}
   if(a==='pgside'){PG.side=b.getAttribute('data-v');render(false);return}
