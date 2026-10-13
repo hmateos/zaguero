@@ -685,11 +685,13 @@ function vSesion(){
 }
 
 /* ---------- historial ---------- */
+var OLDNAME={'Remo Meadows con landmine':'Remo Meadows con landmine (unilateral)','Extensión de tríceps sobre la cabeza':'Extensión de tríceps tras la nuca (unilateral)'};
+function gkey(n){n=OLDNAME[n||'']||n||'';return n.replace(/\s*\(unilateral\)\s*$/i,'').trim()}
 function history(name){
-  var pts={};
+  var pts={},gk=gkey(name);
   Object.keys(S.logs).forEach(function(k){
     var date=S.logs[k].d||k.split('|')[0],m=S.logs[k].ex||{};
-    for(var i in m){var e=m[i];if(!e||e.n!==name||!e.sets)continue;
+    for(var i in m){var e=m[i];if(!e||gkey(e.n)!==gk||!e.sets)continue;
       e.sets.forEach(function(x){if(!x||!x.ok)return;
         var p=pts[date]||(pts[date]={date:date,rm:0,vol:0,kg:0,reps:0});
         var rm=x.kg>0?x.kg*(1+Math.min(x.reps,12)/30):0;
@@ -729,7 +731,7 @@ function vDetalle(){
   var out='<button type="button" class="back" data-a="backd">'+I.back+'Volver</button><h1 class="title">'+esc(name)+'</h1>';
   if(ctxSlot){var r=repsOf(ctxSlot,va,c);out+='<div class="meta" style="margin-top:8px">'+BLOCKS[ctxSlot.b].n+'<i>·</i>'+esc(ctxSlot.s)+'<i>·</i>'+nSets(ctxSlot,c.pi)+'× '+esc(r)+(ctxSlot.main?'<i>·</i>'+c.phase.pct+' 1RM':'')+'</div>'}
   out+='<div class="stats"><div class="stat"><div class="meta">Última vez</div><div class="big">'+(last&&last.kg?fmtKg(last.kg)+'<small>kg</small>':'—')+'</div></div>'+
-    '<div class="stat"><div class="meta">1RM estimado</div><div class="big">'+(best.rm?Math.round(best.rm)+'<small>kg</small>':'—')+'</div></div>'+
+    '<div class="stat"><div class="meta">1RM estimado</div><div class="big">'+(best.rm?Math.round(best.rm)+'<small>kg'+(isUni(name)?' por brazo':'')+'</small>':'—')+'</div></div>'+
     '<div class="stat"><div class="meta">Volumen máx.</div><div class="big">'+(maxVol?Math.round(maxVol)+'<small>kg</small>':'—')+'</div></div></div>';
   out+='<h2 class="h2">Historial</h2><div class="toggle" role="group" aria-label="Métrica"><button type="button" data-a="metric" data-m="rm" aria-pressed="'+(metric==='rm')+'">1RM estimado</button><button type="button" data-a="metric" data-m="vol" aria-pressed="'+(metric==='vol')+'">Volumen</button></div>';
   if(pts.length>=2){
@@ -775,7 +777,7 @@ var MUS={
   hombros:{n:'Hombros',m:'hombros',s:[['md1','Hombro'],['md3','Fuerza principal'],['md5','Hombro y brazos']]},
   pecho:{n:'Pecho',m:'pecho',s:[['md1','Fuerza principal'],['md1','Pecho'],['md3','Pecho'],['md5','Empuje']]},
   biceps:{n:'Bíceps',m:'brazo',s:[['md1','Tirón pesado'],['md1','Bíceps en estiramiento'],['md3','Bíceps'],['md5','Hombro y brazos']]},
-  triceps:{n:'Tríceps',m:'brazo',s:[['md1','Tríceps en estiramiento'],['md3','Tríceps'],['md3','Fuerza principal'],['md5','Hombro y brazos']]},
+  triceps:{n:'Tríceps',m:'brazo',s:[['md1','Tríceps en estiramiento'],['md1','Tríceps a una mano'],['md3','Tríceps'],['md3','Fuerza principal'],['md5','Hombro y brazos']]},
   antebrazo:{n:'Antebrazo',m:'antebrazo',s:[['md3','Trapecio y agarre'],['md3','Tirón pesado'],['md3','Bíceps'],['md3','Tríceps']]},
   dorsal:{n:'Espalda',m:null,s:[['md1','Tirón pesado'],['md1','Espalda'],['md3','Dorsal'],['md3','Tirón pesado'],['md5','Tirón']]},
   abdomen:{n:'Abdomen',m:'cintura',inv:true,s:[['md1','Antiextensión'],['md4','Flexor de cadera'],['md5','Core']]},
@@ -810,7 +812,7 @@ function musStrength(id){
 function musSize(id){var M=MUS[id];if(!M.m)return{pts:[],g:null};var pts=series(S.meas,M.m);return{pts:pts,g:growth(pts,M.inv)}}
 function pct(g){return g===null||g===undefined?'—':(g>=0?'+':'−')+Math.abs(g).toFixed(1).replace('.',',')+' %'}
 function gcls(g){return g===null||g===undefined?'':g>=0?'up':'dn'}
-function allNames(){var s={};Object.keys(S.logs).forEach(function(k){var m=S.logs[k].ex||{};for(var i in m){var e=m[i];if(e&&e.n&&e.sets&&e.sets.some(function(x){return x&&x.ok}))s[e.n]=1}});return Object.keys(s)}
+function allNames(){var s={};Object.keys(S.logs).forEach(function(k){var m=S.logs[k].ex||{};for(var i in m){var e=m[i];if(e&&e.n&&e.sets&&e.sets.some(function(x){return x&&x.ok})){var g=gkey(e.n),cur=s[g];if(!cur||(isUni(e.n)&&!isUni(cur)))s[g]=OLDNAME[e.n]||e.n}}});return Object.keys(s).map(function(g){return s[g]})}
 function relSeries(){
   var pw=series(S.meas,'peso');if(!pw.length)return [];
   return exSeries('Sentadilla trasera').filter(function(p){return p.kg>0}).map(function(p){
@@ -981,7 +983,7 @@ function pgFuerza(){
   var avg=names.filter(function(x){return x.g!==null});avg=avg.length?avg.reduce(function(a,x){return a+x.g},0)/avg.length:null;
   var out='<div class="kp" style="margin-top:0;grid-template-columns:1fr 1fr"><div><div class="meta">Fuerza media</div><div class="big '+gcls(avg)+'">'+pct(avg)+'</div><div class="meta">desde el inicio</div></div><div><div class="meta">Ejercicios</div><div class="big">'+names.length+'</div><div class="meta">con datos</div></div></div>';
   out+='<div class="mchips" style="margin-top:16px">'+names.map(function(x){return '<button type="button" data-a="lift" data-n="'+esc(x.n)+'" aria-pressed="'+(x.n===PG.lift)+'">'+esc(x.n)+' <b>'+pct(x.g)+'</b></button>'}).join('')+'</div>';
-  out+='<div class="mpanel"><div class="meta">'+esc(cur.n)+'</div><div class="big" style="font-size:36px;margin:6px 0 2px">'+(l.kg>0?fmtKg(Math.round(l.v))+'<small>kg 1RM est.</small>':l.v+'<small>reps</small>')+'</div><div class="meta '+gcls(cur.g)+'" style="margin-bottom:14px">'+pct(cur.g)+' desde el '+fmtD(cur.pts[0].date)+'</div>'+
+  out+='<div class="mpanel"><div class="meta">'+esc(cur.n)+'</div><div class="big" style="font-size:36px;margin:6px 0 2px">'+(l.kg>0?fmtKg(Math.round(l.v))+'<small>kg 1RM est.'+(isUni(cur.n)?' por brazo':'')+'</small>':l.v+'<small>reps</small>')+'</div><div class="meta '+gcls(cur.g)+'" style="margin-bottom:14px">'+pct(cur.g)+' desde el '+fmtD(cur.pts[0].date)+'</div>'+
     (cur.pts.length>=2?chart(cur.pts,'v'):'<div class="emptychart" style="height:110px">Con una segunda sesión verás la tendencia.</div>')+
     '<button type="button" class="pill dark" style="margin-top:16px;height:46px" data-a="detailn" data-n="'+esc(cur.n)+'">Ver historial completo</button></div>';
   return out;

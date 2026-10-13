@@ -73,7 +73,11 @@ var GYM={
       {b:'R',s:'Cardio',f:'Si jugaste, ayuda a soltar las piernas. Si jugaste poco, recupera el estímulo de carrera que te faltó.',sets:1,reps:'15-20 min',rest:0,v:[
         {n:'Bici estática',c:'Si jugaste más de 45 min: ritmo suave, puedes hablar sin esfuerzo. Si jugaste menos: 6 × 30 s fuerte con 90 s suave entre medias.'},
         {n:'Elíptica',c:'Si jugaste más de 45 min: ritmo suave y constante. Si jugaste menos: 6 × 30 s fuerte con 90 s suave entre medias.'},
-        {n:'Cinta: caminata en pendiente',c:'Inclinación del 8-12 % a paso rápido, sin impacto. Si jugaste poco, cambia a 6 × 30 s de carrera rápida con 90 s andando.'}]}
+        {n:'Cinta: caminata en pendiente',c:'Inclinación del 8-12 % a paso rápido, sin impacto. Si jugaste poco, cambia a 6 × 30 s de carrera rápida con 90 s andando.'}]},
+      {b:'C',s:'Tríceps a una mano',f:'Cada brazo trabaja por su cuenta: tríceps más equilibrado y más volumen en el brazo.',sets:2,reps:'10-12',rest:60,v:[
+        {n:'Press francés a una mano con mancuerna (unilateral)',c:'Tumbado en el banco, codo fijo apuntando al techo. Baja la mancuerna hacia la frente y sube sin bloquear el codo.'},
+        {n:'Extensión de tríceps a una mano en banco inclinado (unilateral)',c:'Banco inclinado, codo pegado a la cabeza. Extiende el brazo sin mover el hombro.'},
+        {n:'Flexiones de diamante',c:'Manos juntas bajo el pecho formando un diamante. Codos pegados al cuerpo y pecho al suelo.'}]}
     ]},
   md4:{id:'md4',dayIdx:2,md:'MD-4',name:'Pierna · Potencia',when:'Cuatro días antes del partido',
     sub:'El único día de pierna y el más pesado de la semana. Lo ideal es dejarlo 3 o 4 días antes del partido.',
