@@ -50,10 +50,14 @@ var GYM={
         {n:'Elevación lateral sentado con mancuernas',c:'Sentado en el banco, espalda recta. Sin impulso de piernas, todo el trabajo lo hace el hombro. El hombro ancho da presencia en el campo.'},
         {n:'Elevación lateral con mancuernas',c:'Sube a la altura del hombro con el codo algo flexionado.'},
         {n:'Pájaros con pecho apoyado en banco inclinado',c:'Pecho sobre el banco, abre los brazos hacia los lados con los codos algo flexionados. Deltoides posterior y salud del hombro.'}]},
-      {b:'C',s:'Brazos · estiramiento',f:'Tamaño de brazo y codos sanos. Aquí manda la estética, no la transferencia directa.',sets:2,reps:'10-12',rest:60,v:[
-        {n:'Curl inclinado con mancuernas + extensión de tríceps sobre la cabeza',c:'Superserie con el brazo estirado: curl en banco a 45° y extensión con una mancuerna por detrás de la cabeza. Trabajan la cabeza larga de bíceps y tríceps. Descansa después de los dos.'},
-        {n:'Curl predicador con barra Z + fondos en banco',c:'Superserie: baja el curl hasta estirar del todo. Fondos con los pies en otro banco y un disco en el regazo si te sobran repeticiones.'},
-        {n:'Curl Zottman + extensión de tríceps tumbado con mancuernas',c:'Superserie: el Zottman sube en supino y baja en prono, así trabajas también el antebrazo. Extensión con los codos fijos apuntando al techo.'}]},
+      {b:'C',s:'Bíceps en estiramiento',f:'Bíceps largo y codos sanos. Aquí manda la estética, no la transferencia directa.',sets:2,reps:'10-12',rest:60,v:[
+        {n:'Curl inclinado con mancuernas',c:'Banco a 45°, brazos colgando detrás del cuerpo. Sube sin balancearte y baja lento.'},
+        {n:'Curl predicador con barra Z',c:'Baja el curl hasta estirar del todo, sin soltar la tensión.'},
+        {n:'Curl Zottman',c:'Sube en supino y baja en prono: trabajas bíceps y antebrazo.'}]},
+      {b:'C',s:'Tríceps en estiramiento',f:'Tríceps largo: la parte del brazo que más aporta a su tamaño.',sets:2,reps:'10-12',rest:60,v:[
+        {n:'Extensión de tríceps sobre la cabeza',c:'Mancuerna por detrás de la cabeza, codos apuntando al techo. Baja hasta sentir el estiramiento.'},
+        {n:'Fondos en banco',c:'Espalda pegada al banco y codos hacia atrás. Baja controlado.'},
+        {n:'Extensión de tríceps tumbado con mancuernas',c:'Codos fijos apuntando al techo. Baja hasta la frente.'}]},
       {b:'B',s:'Aductor',f:'La ingle es de las lesiones más comunes del fútbol y el central la carga en cada cambio de dirección.',sets:2,reps:'6-8 / lado',rest:60,v:[
         {n:'Copenhagen corto',c:'Rodilla apoyada en el banco. Sube la cadera y baja en 3 s. Si el domingo acabaste muy cargado, haz una sola serie.'},
         {n:'Copenhagen largo',c:'Tobillo apoyado en el banco: palanca larga y más exigente. Solo si el corto ya es cómodo.'},
@@ -140,10 +144,14 @@ var GYM={
         {n:'Dominadas con agarre ancho',r:'8-10',c:'Pecho a la barra y baja hasta estirar del todo. Si no llegas a 8, usa una goma.'},
         {n:'Remo Kroc con mancuerna',r:'10 / lado',c:'Mancuerna pesada, mano libre apoyada. Tira hacia la cadera con algo de impulso controlado.'},
         {n:'Remo T con landmine',r:'10',c:'De pie sobre la barra, agarre en V. Tira hacia el pecho manteniendo la espalda neutra.'}]},
-      {b:'C',s:'Brazos',f:'Tamaño de brazo. Aquí manda la estética.',sets:3,reps:'10-12',rest:60,v:[
-        {n:'Fondos en paralelas + curl con barra Z',c:'Superserie: un ejercicio tras otro y descansa después. Aquí van las cargas más pesadas de brazo de la semana.'},
-        {n:'Press francés + curl martillo',c:'Superserie: sin descanso entre los dos.'},
-        {n:'Press de banca agarre cerrado + curl araña',c:'Superserie: manos a la anchura de los hombros en el press. Curl araña con el pecho apoyado en un banco inclinado.'}]},
+      {b:'C',s:'Tríceps',f:'Tríceps grande: empuja el brazo y da el tamaño que se ve.',sets:3,reps:'10-12',rest:45,v:[
+        {n:'Fondos en paralelas',c:'Torso ligeramente inclinado y codos hacia atrás. Baja hasta sentir el estiramiento y sube sin bloquear del todo.'},
+        {n:'Press francés con barra Z',c:'Codos fijos apuntando al techo. Baja la barra hacia la frente.'},
+        {n:'Press de banca agarre cerrado',c:'Manos a la anchura de los hombros. Codos pegados al cuerpo.'}]},
+      {b:'C',s:'Bíceps',f:'Bíceps fuerte y marcado. Aquí manda la estética.',sets:3,reps:'10-12',rest:60,v:[
+        {n:'Curl con barra Z',c:'Codos pegados al cuerpo. Sube sin balancear la espalda.'},
+        {n:'Curl martillo',c:'Mancuernas con palmas enfrentadas. Baja despacio.'},
+        {n:'Curl araña',c:'Pecho apoyado en banco inclinado. Baja sin soltar la tensión.'}]},
       {b:'B',s:'Trapecio y agarre',f:'Trapecio grande y manos fuertes: más presencia y más firmeza para aguantar el cuerpo a cuerpo.',sets:3,reps:'10-12',rest:60,v:[
         {n:'Encogimientos con barra',c:'Sube los hombros hacia las orejas y aguanta 1 s arriba. Sin rodar los hombros.'},
         {n:'Paseo del granjero pesado',r:'30 m',c:'Mancuernas pesadas, pecho alto, hombros abajo y pasos cortos y firmes.'},

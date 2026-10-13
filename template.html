@@ -271,6 +271,13 @@ textarea#bk{width:100%;min-height:90px;border-radius:12px;border:1px solid var(-
 /* editor de semana */
 .wkhead{display:flex;align-items:center;justify-content:space-between;margin-top:22px}
 .linkbtn{font:500 12.5px/1 var(--f-ui);color:var(--acc);padding:8px 0}
+.nextchip{margin:10px 0 0;align-self:flex-start;max-width:100%;display:inline-flex;gap:6px;align-items:center;padding:8px 14px;border-radius:999px;background:var(--s1);border:1px solid var(--line);font-size:13px;color:var(--mute)}
+.nextchip b{color:var(--fg);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.rvlist{text-align:left;max-height:55vh;overflow:auto}
+.rvex{padding:12px 0;border-bottom:1px solid var(--line)}
+.rvname{font-size:15px;color:var(--fg);margin-bottom:6px}
+.rvrow{display:flex;gap:6px;align-items:center;margin:6px 0;font-size:13px;color:var(--mute)}
+.rvrow input{width:64px;padding:8px;border-radius:10px;border:1px solid var(--line);background:var(--s1);color:var(--fg);font:inherit;text-align:center}
 .wkchips{display:flex;gap:6px;overflow-x:auto;margin:16px -20px 0;padding:0 20px 4px}
 .wkchips button{flex:none;height:34px;padding-inline:14px;border-radius:999px;background:var(--s2);font:500 12px/1 var(--f-ui);color:var(--mute);white-space:nowrap}
 .wkchips button[aria-pressed="true"]{background:var(--fg);color:var(--black)}
@@ -765,9 +772,9 @@ var MUS={
   trapecio:{n:'Trapecio',m:null,s:[['md3','Trapecio y agarre'],['md1','Tirón pesado']]},
   hombros:{n:'Hombros',m:'hombros',s:[['md1','Hombro'],['md3','Fuerza principal'],['md5','Hombro y brazos']]},
   pecho:{n:'Pecho',m:'pecho',s:[['md1','Fuerza principal'],['md1','Pecho'],['md3','Pecho'],['md5','Empuje']]},
-  biceps:{n:'Bíceps',m:'brazo',s:[['md1','Tirón pesado'],['md1','Brazos · estiramiento'],['md3','Brazos'],['md5','Hombro y brazos']]},
-  triceps:{n:'Tríceps',m:'brazo',s:[['md1','Brazos · estiramiento'],['md3','Brazos'],['md3','Fuerza principal'],['md5','Hombro y brazos']]},
-  antebrazo:{n:'Antebrazo',m:'antebrazo',s:[['md3','Trapecio y agarre'],['md3','Tirón pesado'],['md3','Brazos']]},
+  biceps:{n:'Bíceps',m:'brazo',s:[['md1','Tirón pesado'],['md1','Bíceps en estiramiento'],['md3','Bíceps'],['md5','Hombro y brazos']]},
+  triceps:{n:'Tríceps',m:'brazo',s:[['md1','Tríceps en estiramiento'],['md3','Tríceps'],['md3','Fuerza principal'],['md5','Hombro y brazos']]},
+  antebrazo:{n:'Antebrazo',m:'antebrazo',s:[['md3','Trapecio y agarre'],['md3','Tirón pesado'],['md3','Bíceps'],['md3','Tríceps']]},
   dorsal:{n:'Espalda',m:null,s:[['md1','Tirón pesado'],['md1','Espalda'],['md3','Dorsal'],['md3','Tirón pesado'],['md5','Tirón']]},
   abdomen:{n:'Abdomen',m:'cintura',inv:true,s:[['md1','Antiextensión'],['md4','Flexor de cadera'],['md5','Core']]},
   oblicuos:{n:'Oblicuos',m:null,s:[['md1','Lateral'],['md3','Rotación'],['md3','Lateral'],['md4','Antirrotación'],['md5','Core']]},
@@ -890,9 +897,9 @@ function vProgreso(){
   out+='<div class="shead"><div><h1 class="title">Progreso</h1><div class="meta" style="margin-top:8px">'+(first?'Desde el '+fmtD(first):'Registra tus medidas y tus series para empezar')+'</div></div>'+
     '<button type="button" class="chip" data-a="demo">'+(DEMO?'Salir del ejemplo':'Ver ejemplo')+'</button></div>';
   if(DEMO)out+='<div class="demo">Datos de ejemplo para ver cómo funcionan las gráficas. No son tuyos y no se guardan.</div>';
-  out+='<div class="seg3" style="margin-top:18px" role="group" aria-label="Sección">'+[['cuerpo','Cuerpo'],['fuerza','Fuerza'],['potencia','Potencia']].map(function(x){
+  out+='<div class="seg3" style="margin-top:18px;grid-template-columns:repeat(4,1fr)" role="group" aria-label="Sección">'+[['cuerpo','Cuerpo'],['fuerza','Fuerza'],['potencia','Potencia'],['historial','Historial']].map(function(x){
     return '<button type="button" data-a="pgtab" data-v="'+x[0]+'" aria-pressed="'+(PG.tab===x[0])+'">'+x[1]+'</button>'}).join('')+'</div>';
-  out+=PG.tab==='cuerpo'?pgCuerpo():PG.tab==='fuerza'?pgFuerza():pgPotencia();
+  out+=PG.tab==='cuerpo'?pgCuerpo():PG.tab==='fuerza'?pgFuerza():PG.tab==='historial'?pgHistorial():pgPotencia();
   return out;
 }
 function valoracion(){
@@ -911,6 +918,22 @@ function measHist(){
   return '<div class="sec-h" style="margin-top:18px"><h2 class="h2">Tus medidas</h2><span class="meta">'+arr.length+(arr.length===1?' registro':' registros')+'</span></div><div class="list">'+arr.map(function(m){
     var parts=MF.filter(function(f){return m[f[0]]!==undefined}).map(function(f){return f[1]+' '+String(m[f[0]]).replace('.',',')+' '+f[2]});
     return '<div class="row" '+(DEMO?'':'data-a="editmeas" data-d="'+m.d+'" style="cursor:pointer;grid-template-columns:1fr"')+(DEMO?' style="grid-template-columns:1fr"':'')+'><span><span class="nm" style="display:block">'+fmtD(m.d)+'</span><span class="sb" style="display:block">'+esc(parts.join(' · '))+'</span></span></div>'}).join('')+'</div>';
+}
+function pgHistorial(){
+  var keys=Object.keys(S.logs||{}).filter(function(k){var l=S.logs[k];return l&&((l.ex&&Object.keys(l.ex).length)||l.warmSkip||(l.warm&&l.warm.some(Boolean)))});
+  if(!keys.length)return '<div class="list" style="margin-top:16px"><div class="row" style="grid-template-columns:1fr"><span><span class="nm" style="display:block">Todavía no hay entrenamientos</span><span class="sb" style="display:block">Cuando registres series, aparecerán aquí con sus pesos.</span></span></div></div>';
+  keys.sort(function(a,b){var la=S.logs[a],lb=S.logs[b];return ((lb.d||b)<(la.d||a))?-1:1});
+  return '<div class="list" style="margin-top:16px">'+keys.slice(0,40).map(function(k){
+    var l=S.logs[k],pipe=k.indexOf('|'),id=pipe>-1?k.slice(pipe+1):'',g=GYM[id],date=l.d?fmtD(l.d):(pipe>-1?fmtD(k.slice(0,pipe)):'');
+    var body=[];
+    if(l.warmSkip)body.push('Calentamiento: no realizado');
+    Object.keys(l.ex||{}).sort(function(x,y){return Number(x)-Number(y)}).forEach(function(i){
+      var e=l.ex[i];if(!e||!e.sets)return;
+      var sets=e.sets.filter(Boolean).map(function(x){return x.skip?'no realizado':fmtKg(x.kg||0)+' kg × '+(x.reps||0)});
+      if(sets.length)body.push(esc((e.n||'Ejercicio')+': ')+esc(sets.join(' · ')));
+    });
+    return '<div class="row" style="grid-template-columns:1fr"><span><span class="nm" style="display:block">'+esc((g?g.name:'Entrenamiento')+' · '+date)+'</span><span class="sb" style="display:block;line-height:1.7">'+body.join('<br>')+'</span></span></div>';
+  }).join('')+'</div>';
 }
 function pgCuerpo(){
   var pw=series(S.meas,'peso'),last=pw[pw.length-1],gw=growth(pw),ws=weekSessions(),bars='';
@@ -1139,7 +1162,8 @@ function plTop(){
   var curI=P.pos<P.q.length?P.q[P.pos].i:-1,c=ctx();
   var segs=order.map(function(i){var n=nSets(P.g.slots[i],c.pi),d=Math.min(okCount(exOf(P.k,i)),n),w=Math.round(d/n*100);if(i===curI&&w===0)w=4;
     return '<i class="'+(i===curI?'cur':'')+'"><b style="width:'+w+'%"></b></i>'}).join('');
-  return '<div class="pl-top"><span class="pl-time" id="plt">'+mmss(el)+'</span><span class="acts"><button type="button" data-a="plsheet" aria-label="Semáforo">'+I.sliders+'</button><button type="button" data-a="pllist" aria-label="Ver lista de ejercicios">'+I.list+'</button><button type="button" data-a="plclose" aria-label="Cerrar">'+I.close+'</button></span></div><div class="prog">'+segs+'</div>';
+  var nxc='';if(P.phase==='set'||P.phase==='rest'){var nq=P.q.findIndex(function(q,ix){return ix>P.pos&&!isOk(P.k,q)&&q.i!==curI});if(nq>=0)nxc='<button type="button" class="nextchip" data-a="plnext" data-p="'+nq+'">Siguiente: <b>'+esc(P.g.slots[P.q[nq].i].v[vIdx(P.k,P.q[nq].i,c.vi)].n)+'</b> ›</button>'}
+  return '<div class="pl-top"><span class="pl-time" id="plt">'+mmss(el)+'</span><span class="acts"><button type="button" data-a="plsheet" aria-label="Semáforo">'+I.sliders+'</button><button type="button" data-a="pllist" aria-label="Ver lista de ejercicios">'+I.list+'</button><button type="button" data-a="plclose" aria-label="Cerrar">'+I.close+'</button></span></div><div class="prog">'+segs+'</div>'+nxc;
 }
 function mediaFor(name,b){
   var m=med(name);if(m&&!m.fe)return mediaTag(m,false);
@@ -1151,14 +1175,15 @@ function renderPlayer(){
     var l=S.logs[P.k],w=l.warm||[];
     out+='<div class="stage"><div class="media">'+mediaFor('',"A")+'</div><div class="st-head"><div><div class="set">A · Activar</div><h2>Calentamiento</h2><div class="blkl">8 min · marca cada paso</div></div></div>'+
       '<div class="warmlist">'+g.warm.map(function(t,i){return '<button type="button" class="wi" data-a="warm" data-i="'+i+'" aria-pressed="'+!!w[i]+'"><span class="bx">'+I.check+'</span><span>'+esc(t)+'</span></button>'}).join('')+'</div>'+
-      '<div style="padding:16px 18px 18px"><button type="button" class="pill white" data-a="warmgo">Empezar ejercicios</button></div></div>';
-    var f=P.q[0],fs=g.slots[f.i];out+='<div class="next"><b>Siguiente</b>→<span>'+esc(fs.v[vIdx(P.k,f.i,c.vi)].n)+'</span></div>';
+      '<div style="padding:16px 18px 18px"><button type="button" class="pill white" data-a="warmgo">Empezar ejercicios</button><button type="button" class="linkbtn" data-a="warmskip" style="display:block;margin:12px auto 0">No hago el calentamiento</button></div></div>';
   }else if(P.phase==='done'){
     var l2=S.logs[P.k],dur=l2&&l2.t0?(Date.now()-l2.t0)/1000:0,sets=0,vol=0;
-    Object.keys(l2.ex||{}).forEach(function(i){var e=l2.ex[i];(e.sets||[]).forEach(function(x){if(x&&x.ok){sets++;vol+=(x.kg||0)*(x.reps||0)}})});
+    Object.keys(l2.ex||{}).forEach(function(i){var e=l2.ex[i];(e.sets||[]).forEach(function(x){if(x&&x.ok&&!x.skip){sets++;vol+=(x.kg||0)*(x.reps||0)}})});
     out+='<div class="stage"><div class="media">'+mediaFor('','F')+'</div><div class="summary"><div class="set mono" style="color:var(--acc);font-size:12px;margin-bottom:10px">'+(mdOf(g.id)?mdOf(g.id)+' · ':'')+esc(g.name)+'</div><h2 class="slogan">Sesión<br>completada.</h2>'+
       '<div class="sumgrid"><div><div class="meta">Tiempo</div><div class="big">'+Math.round(dur/60)+'<small>min</small></div></div><div><div class="meta">Series</div><div class="big">'+sets+'</div></div><div><div class="meta">Volumen</div><div class="big">'+fmtKg(vol/1000)+'<small>t</small></div></div></div>'+
-      '<button type="button" class="pill white" data-a="plfinish">Guardar y cerrar</button></div></div>';
+      '<button type="button" class="pill dark" data-a="plreview" style="margin-bottom:10px">Repasar pesos</button><button type="button" class="pill white" data-a="plfinish">Guardar y cerrar</button></div></div>';
+  }else if(P.phase==='review'){
+    out+=reviewHtml();
   }else{
     var st=P.q[P.pos],sl=g.slots[st.i],vi=vIdx(P.k,st.i,c.vi),va=sl.v[vi],n=nSets(sl,c.pi),reps=repsOf(sl,va,c);
     out+='<div class="stage"><div class="media">'+mediaFor(va.n,sl.b)+'</div>';
@@ -1174,10 +1199,8 @@ function renderPlayer(){
         '<p class="cue">'+(sl.f?'<span class="fieldlbl">En el campo</span><span class="ftxt">'+esc(sl.f)+'</span>':'')+esc(va.c)+'</p>'+
         '<div class="nums"><div class="num"><input id="pl-reps" inputmode="numeric" aria-label="'+unitOf(reps)+'" value="'+P.vals.reps+'"><div class="u">'+unitOf(reps)+'</div><div class="step"><button type="button" data-a="adj" data-f="reps" data-d="-1" aria-label="Menos repeticiones">−</button><button type="button" data-a="adj" data-f="reps" data-d="1" aria-label="Más repeticiones">+</button></div></div>'+
         (sl.b==='R'?'<div></div>':'<div class="num r"><input id="pl-kg" inputmode="decimal" aria-label="Peso en kilos" value="'+fmtKg(P.vals.kg)+'"><div class="u">Peso · kg</div><div class="step"><button type="button" data-a="adj" data-f="kg" data-d="-2.5" aria-label="Menos peso">−</button><button type="button" data-a="adj" data-f="kg" data-d="2.5" aria-label="Más peso">+</button></div></div>')+'</div></div>'+
-        '<button type="button" class="pill white done-btn" data-a="setdone">Serie hecha</button>';
+        '<button type="button" class="pill white done-btn" data-a="setdone">Serie hecha</button><button type="button" class="linkbtn" data-a="plskip" style="display:block;margin:10px auto 0">No realizo este ejercicio</button>';
     }
-    var nx=P.q[P.phase==='rest'?P.pos+1:P.pos+1];
-    if(P.phase!=='rest'&&nx){var ns=g.slots[nx.i];out+='<div class="next"><b>Siguiente</b>→<span>'+esc(ns.v[vIdx(P.k,nx.i,c.vi)].n)+' · serie '+(nx.s+1)+'</span></div>'}
     if(P.phase==='rest'){out+='<div class="next"><b>Ahora</b>→<span>'+esc(va.n)+' · serie '+(st.s+1)+'</span></div>'}
   }
   out+='</div></div>';
@@ -1213,6 +1236,42 @@ function setDone(){
   renderPlayer();
 }
 
+function skipEx(){
+  var c=ctx(),st=P.q[P.pos],sl=P.g.slots[st.i],vi=vIdx(P.k,st.i,c.vi),e=ensureEx(P.k,st.i,sl.v[vi].n,vi),n=nSets(sl,c.pi);
+  for(var s=0;s<n;s++){if(!(e.sets[s]&&e.sets[s].ok))e.sets[s]={kg:0,reps:0,ok:true,skip:true}}
+  fill(e.sets);ensureLog(P.k).d=iso(today());save();
+  var nx=P.q.findIndex(function(q,ix){return ix>P.pos&&!isOk(P.k,q)});
+  if(nx<0)nx=P.q.findIndex(function(q){return !isOk(P.k,q)});
+  if(nx<0){P.pos=P.q.length;P.phase='done';renderPlayer();return}
+  P.pos=nx;P.phase='set';loadVals();renderPlayer();
+}
+function reviewHtml(){
+  var seen={},rows='';
+  P.q.forEach(function(st){
+    if(seen[st.i])return;seen[st.i]=1;
+    var e=exOf(P.k,st.i);if(!e||!e.sets||!e.sets.length)return;
+    var nm=e.n||P.g.slots[st.i].v[0].n;
+    rows+='<div class="rvex"><div class="rvname">'+esc(nm)+'</div>'+e.sets.map(function(x,s){
+      if(!x)return '';
+      if(x.skip)return '<div class="rvrow"><span>Serie '+(s+1)+'</span><span>No realizado</span></div>';
+      return '<div class="rvrow"><span>Serie '+(s+1)+'</span><input id="rv-kg-'+st.i+'-'+s+'" inputmode="decimal" value="'+fmtKg(x.kg||0)+'"><span>kg</span><input id="rv-rp-'+st.i+'-'+s+'" inputmode="numeric" value="'+(x.reps||0)+'"><span>reps</span></div>';
+    }).join('')+'</div>';
+  });
+  if(!rows)rows='<p class="meta">Todavía no hay series registradas.</p>';
+  return '<div class="stage"><div class="summary"><div class="set mono" style="color:var(--acc);font-size:12px;margin-bottom:10px">Repaso</div><h2 class="slogan">Revisa<br>los pesos.</h2><div class="rvlist">'+rows+'</div><button type="button" class="pill white" style="margin-top:14px" data-a="reviewdone">Guardar cambios</button></div></div>';
+}
+function saveReview(){
+  var seen={};
+  P.q.forEach(function(st){
+    if(seen[st.i])return;seen[st.i]=1;
+    var e=exOf(P.k,st.i);if(!e||!e.sets)return;
+    e.sets.forEach(function(x,s){
+      var kg=document.getElementById('rv-kg-'+st.i+'-'+s),rp=document.getElementById('rv-rp-'+st.i+'-'+s);
+      if(x&&kg&&rp){x.kg=parseFloat(String(kg.value).replace(',','.'))||0;x.reps=parseInt(rp.value,10)||0}
+    });
+  });
+  save();P.phase='done';renderPlayer();
+}
 /* ---------- render ---------- */
 function render(top){
   var REAL=S,useDemo=DEMO&&(view==='progreso'||(view==='detalle'&&prevView==='progreso'));
@@ -1313,6 +1372,11 @@ document.addEventListener('click',function(ev){
   if(a==='adj'){readVals();var f=b.getAttribute('data-f'),d=Number(b.getAttribute('data-d'));P.vals[f]=Math.max(0,Math.round((P.vals[f]+d)*10)/10);
     var inp=document.getElementById(f==='kg'?'pl-kg':'pl-reps');inp.value=f==='kg'?fmtKg(P.vals.kg):P.vals.reps;return}
   if(a==='setdone'){setDone();return}
+  if(a==='plskip'){skipEx();return}
+  if(a==='warmskip'){var lw=ensureLog(P.k);lw.warm=P.g.warm.map(function(){return true});lw.warmSkip=true;save();P.phase='set';P.pos=0;loadVals();renderPlayer();return}
+  if(a==='plnext'){P.pos=Number(b.getAttribute('data-p'));P.phase='set';loadVals();renderPlayer();return}
+  if(a==='plreview'){P.phase='review';renderPlayer();return}
+  if(a==='reviewdone'){saveReview();return}
   if(a==='rest+'){P.restEnd+=15000;P.restDur+=15;return}
   if(a==='restskip'){P.phase='set';renderPlayer();return}
   if(a==='plfinish'){var lf=ensureLog(P.k);lf.done=true;save();closePlayer();toast('Sesión guardada');return}
