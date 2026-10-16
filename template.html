@@ -731,7 +731,7 @@ function vDetalle(){
   var out='<button type="button" class="back" data-a="backd">'+I.back+'Volver</button><h1 class="title">'+esc(name)+'</h1>';
   if(ctxSlot){var r=repsOf(ctxSlot,va,c);out+='<div class="meta" style="margin-top:8px">'+BLOCKS[ctxSlot.b].n+'<i>·</i>'+esc(ctxSlot.s)+'<i>·</i>'+nSets(ctxSlot,c.pi)+'× '+esc(r)+(ctxSlot.main?'<i>·</i>'+c.phase.pct+' 1RM':'')+'</div>'}
   out+='<div class="stats"><div class="stat"><div class="meta">Última vez</div><div class="big">'+(last&&last.kg?fmtKg(last.kg)+'<small>kg</small>':'—')+'</div></div>'+
-    '<div class="stat"><div class="meta">1RM estimado</div><div class="big">'+(best.rm?Math.round(best.rm)+'<small>kg'+(isUni(name)?' por brazo':'')+'</small>':'—')+'</div></div>'+
+    '<div class="stat"><div class="meta">1RM estimado</div><div class="big">'+(best.rm?Math.round(best.rm)+'<small>kg'+(unitTxt(name)?' por '+unitTxt(name):'')+'</small>':'—')+'</div></div>'+
     '<div class="stat"><div class="meta">Volumen máx.</div><div class="big">'+(maxVol?Math.round(maxVol)+'<small>kg</small>':'—')+'</div></div></div>';
   out+='<h2 class="h2">Historial</h2><div class="toggle" role="group" aria-label="Métrica"><button type="button" data-a="metric" data-m="rm" aria-pressed="'+(metric==='rm')+'">1RM estimado</button><button type="button" data-a="metric" data-m="vol" aria-pressed="'+(metric==='vol')+'">Volumen</button></div>';
   if(pts.length>=2){
@@ -983,7 +983,7 @@ function pgFuerza(){
   var avg=names.filter(function(x){return x.g!==null});avg=avg.length?avg.reduce(function(a,x){return a+x.g},0)/avg.length:null;
   var out='<div class="kp" style="margin-top:0;grid-template-columns:1fr 1fr"><div><div class="meta">Fuerza media</div><div class="big '+gcls(avg)+'">'+pct(avg)+'</div><div class="meta">desde el inicio</div></div><div><div class="meta">Ejercicios</div><div class="big">'+names.length+'</div><div class="meta">con datos</div></div></div>';
   out+='<div class="mchips" style="margin-top:16px">'+names.map(function(x){return '<button type="button" data-a="lift" data-n="'+esc(x.n)+'" aria-pressed="'+(x.n===PG.lift)+'">'+esc(x.n)+' <b>'+pct(x.g)+'</b></button>'}).join('')+'</div>';
-  out+='<div class="mpanel"><div class="meta">'+esc(cur.n)+'</div><div class="big" style="font-size:36px;margin:6px 0 2px">'+(l.kg>0?fmtKg(Math.round(l.v))+'<small>kg 1RM est.'+(isUni(cur.n)?' por brazo':'')+'</small>':l.v+'<small>reps</small>')+'</div><div class="meta '+gcls(cur.g)+'" style="margin-bottom:14px">'+pct(cur.g)+' desde el '+fmtD(cur.pts[0].date)+'</div>'+
+  out+='<div class="mpanel"><div class="meta">'+esc(cur.n)+'</div><div class="big" style="font-size:36px;margin:6px 0 2px">'+(l.kg>0?fmtKg(Math.round(l.v))+'<small>kg 1RM est.'+(unitTxt(cur.n)?' por '+unitTxt(cur.n):'')+'</small>':l.v+'<small>reps</small>')+'</div><div class="meta '+gcls(cur.g)+'" style="margin-bottom:14px">'+pct(cur.g)+' desde el '+fmtD(cur.pts[0].date)+'</div>'+
     (cur.pts.length>=2?chart(cur.pts,'v'):'<div class="emptychart" style="height:110px">Con una segunda sesión verás la tendencia.</div>')+
     '<button type="button" class="pill dark" style="margin-top:16px;height:46px" data-a="detailn" data-n="'+esc(cur.n)+'">Ver historial completo</button></div>';
   return out;
@@ -1204,7 +1204,7 @@ function renderPlayer(){
         (med(va.n)&&med(va.n).fe?feAnim(med(va.n).fe,'inplayer'):'')+
         '<p class="cue">'+(sl.f?'<span class="fieldlbl">En el campo</span><span class="ftxt">'+esc(sl.f)+'</span>':'')+esc(va.c)+'</p>'+
         '<div class="nums"><div class="num"><input id="pl-reps" inputmode="numeric" aria-label="'+unitOf(reps)+'" value="'+P.vals.reps+'"><div class="u">'+unitOf(reps)+'</div><div class="step"><button type="button" data-a="adj" data-f="reps" data-d="-1" aria-label="Menos repeticiones">−</button><button type="button" data-a="adj" data-f="reps" data-d="1" aria-label="Más repeticiones">+</button></div></div>'+
-        (sl.b==='R'||isNoKg(va.n)?'<div></div>':'<div class="num r"><input id="pl-kg" inputmode="decimal" aria-label="Peso en kilos" value="'+fmtKg(P.vals.kg)+'"><div class="u">'+(isUni(va.n)?'Peso por brazo · kg':isBw(va.n)?'Peso extra · kg':'Peso · kg')+'</div><div class="step"><button type="button" data-a="adj" data-f="kg" data-d="-2.5" aria-label="Menos peso">−</button><button type="button" data-a="adj" data-f="kg" data-d="2.5" aria-label="Más peso">+</button></div></div>')+'</div></div>'+
+        (sl.b==='R'||isNoKg(va.n)?'<div></div>':'<div class="num r"><input id="pl-kg" inputmode="decimal" aria-label="Peso en kilos" value="'+fmtKg(P.vals.kg)+'"><div class="u">'+(isUni(va.n)?'Peso por brazo · kg':isMan(va.n)?'Peso por mancuerna · kg':isBw(va.n)?'Peso extra · kg':'Peso · kg')+'</div><div class="step"><button type="button" data-a="adj" data-f="kg" data-d="-2.5" aria-label="Menos peso">−</button><button type="button" data-a="adj" data-f="kg" data-d="2.5" aria-label="Más peso">+</button></div></div>')+'</div></div>'+
         '<button type="button" class="pill white done-btn" data-a="setdone">Serie hecha</button><button type="button" class="linkbtn" data-a="plskip" style="display:block;margin:10px auto 0">No realizo este ejercicio</button>';
     }
     if(P.phase==='rest'){out+='<div class="next"><b>Ahora</b>→<span>'+esc(va.n)+' · serie '+(st.s+1)+'</span></div>'}
@@ -1252,9 +1252,11 @@ function skipEx(){
   P.pos=nx;P.phase='set';loadVals();renderPlayer();
 }
 function isUni(n){return /\(unilateral\)/i.test(n||'')}
+function isMan(n){return !isUni(n)&&/mancuerna/i.test(n||'')}
+function unitTxt(n){return isUni(n)?'brazo':isMan(n)?'mancuerna':''}
 function isBw(n){return /dominada|fondo/i.test(n||'')}
 function isNoKg(n){return /rueda abdominal/i.test(n||'')}
-function setTxt(n,x){if(isNoKg(n))return (x.reps||0)+' reps';if(isBw(n)&&!x.kg)return 'peso corporal';return fmtKg(x.kg||0)+(isUni(n)?' kg por brazo':' kg')+' × '+(x.reps||0)}
+function setTxt(n,x){if(isNoKg(n))return (x.reps||0)+' reps';if(isBw(n)&&!x.kg)return 'peso corporal';return fmtKg(x.kg||0)+(unitTxt(n)?' kg por '+unitTxt(n):' kg')+' × '+(x.reps||0)}
 var HE=null;
 function histSets(e){return (e.sets||[]).map(function(x,s){return x?{x:x,s:s}:null}).filter(Boolean)}
 function renderHist(){
@@ -1265,7 +1267,7 @@ function renderHist(){
   var exs=Object.keys(l.ex||{}).sort(function(a,b){return Number(a)-Number(b)}).map(function(i){
     var e=l.ex[i],nm=e.n||'Ejercicio',uni=isUni(nm),allSkip=(e.sets||[]).length&&(e.sets||[]).every(function(x){return !x||x.skip});
     return '<div class="rvex"><input class="hname" id="he-n-'+i+'" value="'+esc(nm)+'"><label class="hchk"><input type="checkbox" id="he-skip-'+i+'"'+(allSkip?' checked':'')+'> No realizado</label>'+
-      (e.sets||[]).map(function(x,s){if(!x)return '';return '<div class="rvrow"><span>Serie '+(s+1)+'</span>'+(isNoKg(nm)?'<span></span>':'<input id="he-kg-'+i+'-'+s+'" inputmode="decimal" value="'+fmtKg(x.kg||0)+'"><span>'+(uni?'kg/brazo':'kg')+'</span>')+'<input id="he-rp-'+i+'-'+s+'" inputmode="numeric" value="'+(x.reps||0)+'"><span>reps</span></div>'}).join('')+
+      (e.sets||[]).map(function(x,s){if(!x)return '';return '<div class="rvrow"><span>Serie '+(s+1)+'</span>'+(isNoKg(nm)?'<span></span>':'<input id="he-kg-'+i+'-'+s+'" inputmode="decimal" value="'+fmtKg(x.kg||0)+'"><span>'+(unitTxt(nm)?'kg/'+unitTxt(nm):'kg')+'</span>')+'<input id="he-rp-'+i+'-'+s+'" inputmode="numeric" value="'+(x.reps||0)+'"><span>reps</span></div>'}).join('')+
       '<button type="button" class="linkbtn" data-a="hadd" data-i="'+i+'">+ añadir serie</button></div>';
   }).join('');
   host.innerHTML='<div class="scrim" data-a="hcancel"><div class="modal" role="dialog" aria-label="Corregir entrenamiento"><div class="grab"></div>'+
@@ -1302,7 +1304,7 @@ function reviewHtml(){
       if(!x)return '';
       if(x.skip)return '<div class="rvrow"><span>Serie '+(s+1)+'</span><span>No realizado</span></div>';
       if(isNoKg(nm))return '<div class="rvrow"><span>Serie '+(s+1)+'</span><span></span><input id="rv-rp-'+st.i+'-'+s+'" inputmode="numeric" value="'+(x.reps||0)+'"><span>reps</span></div>';
-      return '<div class="rvrow"><span>Serie '+(s+1)+'</span><input id="rv-kg-'+st.i+'-'+s+'" inputmode="decimal" value="'+fmtKg(x.kg||0)+'"><span>'+(isUni(nm)?'kg/brazo':'kg')+'</span><input id="rv-rp-'+st.i+'-'+s+'" inputmode="numeric" value="'+(x.reps||0)+'"><span>reps</span></div>';
+      return '<div class="rvrow"><span>Serie '+(s+1)+'</span><input id="rv-kg-'+st.i+'-'+s+'" inputmode="decimal" value="'+fmtKg(x.kg||0)+'"><span>'+(unitTxt(nm)?'kg/'+unitTxt(nm):'kg')+'</span><input id="rv-rp-'+st.i+'-'+s+'" inputmode="numeric" value="'+(x.reps||0)+'"><span>reps</span></div>';
     }).join('')+'</div>';
   });
   if(!rows)rows='<p class="meta">Todavía no hay series registradas.</p>';
