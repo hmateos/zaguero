@@ -685,7 +685,7 @@ function vSesion(){
 }
 
 /* ---------- historial ---------- */
-var OLDNAME={'Remo Meadows con landmine':'Remo Meadows con landmine (unilateral)','Extensión de tríceps sobre la cabeza':'Extensión de tríceps tras la nuca (unilateral)'};
+var OLDNAME={'Remo Meadows con landmine':'Remo Meadows con landmine','Extensión de tríceps sobre la cabeza':'Extensión de tríceps tras la nuca'};
 function gkey(n){n=OLDNAME[n||'']||n||'';return n.replace(/\s*\(unilateral\)\s*$/i,'').trim()}
 function history(name){
   var pts={},gk=gkey(name);
@@ -1251,7 +1251,7 @@ function skipEx(){
   if(nx<0){P.pos=P.q.length;P.phase='done';renderPlayer();return}
   P.pos=nx;P.phase='set';loadVals();renderPlayer();
 }
-function isUni(n){return /\(unilateral\)/i.test(n||'')}
+function isUni(n){n=n||'';return /\(unilateral\)/i.test(n)||/^(Remo Meadows con landmine|Extensión de tríceps tras la nuca|Press francés a una mano|Extensión de tríceps a una mano en banco)/i.test(n)}
 function isMan(n){return !isUni(n)&&/mancuerna/i.test(n||'')}
 function unitTxt(n){return isUni(n)?'brazo':isMan(n)?'mancuerna':''}
 function isBw(n){return /dominada|fondo/i.test(n||'')}

@@ -486,7 +486,7 @@ var GYM={
         {n:'Fondos lastrados',c:'Torso algo inclinado hacia delante. Baja hasta que el hombro quede a la altura del codo.'},
         {n:'Press landmine de pie a una mano',r:'10 / lado',c:'Empuja en diagonal con la cadera quieta. Trabaja pecho, hombro y core a la vez.'}]},
       {b:'C',s:'Espalda',f:'Equilibra todo el empuje y protege el hombro en caídas y choques.',sets:3,reps:'10-12',rest:75,v:[
-        {n:'Remo Meadows con landmine (unilateral)',r:'10 / lado',c:'Barra en esquina, agarre del extremo, de pie y en bisagra. Tira del codo hacia arriba y atrás sin girar el tronco.'},
+        {n:'Remo Meadows con landmine',r:'10 / lado',c:'Barra en esquina, agarre del extremo, de pie y en bisagra. Tira del codo hacia arriba y atrás sin girar el tronco.'},
         {n:'Remo con pecho apoyado',c:'Sin impulso. Pausa de 1 s con las escápulas juntas.'},
         {n:'Remo con mancuerna a una mano en zancada',r:'10 / lado',c:'De pie en zancada, mano libre en la rodilla delantera. Tira hacia la cadera sin rotar: espalda y antirrotación a la vez.'}]},
       {b:'C',s:'Hombro',f:'Hombros anchos y sanos: presencia física y protección cuando caes.',sets:3,reps:'12-15',rest:60,v:[
@@ -498,7 +498,7 @@ var GYM={
         {n:'Curl predicador con barra Z',c:'Baja el curl hasta estirar del todo, sin soltar la tensión.'},
         {n:'Curl Zottman',c:'Sube en supino y baja en prono: trabajas bíceps y antebrazo.'}]},
       {b:'C',s:'Tríceps en estiramiento',f:'Tríceps largo: la parte del brazo que más aporta a su tamaño.',sets:2,reps:'10-12',rest:60,v:[
-        {n:'Extensión de tríceps tras la nuca (unilateral)',c:'Mancuerna por detrás de la cabeza, codos apuntando al techo. Baja hasta sentir el estiramiento.'},
+        {n:'Extensión de tríceps tras la nuca',c:'Mancuerna por detrás de la cabeza, codos apuntando al techo. Baja hasta sentir el estiramiento.'},
         {n:'Fondos en banco',c:'Espalda pegada al banco y codos hacia atrás. Baja controlado.'},
         {n:'Extensión de tríceps tumbado con mancuernas',c:'Codos fijos apuntando al techo. Baja hasta la frente.'}]},
       {b:'B',s:'Aductor',f:'La ingle es de las lesiones más comunes del fútbol y el central la carga en cada cambio de dirección.',sets:2,reps:'6-8 / lado',rest:60,v:[
@@ -518,8 +518,8 @@ var GYM={
         {n:'Elíptica',c:'Si jugaste más de 45 min: ritmo suave y constante. Si jugaste menos: 6 × 30 s fuerte con 90 s suave entre medias.'},
         {n:'Cinta: caminata en pendiente',c:'Inclinación del 8-12 % a paso rápido, sin impacto. Si jugaste poco, cambia a 6 × 30 s de carrera rápida con 90 s andando.'}]},
       {b:'C',s:'Tríceps a una mano',f:'Cada brazo trabaja por su cuenta: tríceps más equilibrado y más volumen en el brazo.',sets:2,reps:'10-12',rest:60,v:[
-        {n:'Press francés a una mano con mancuerna (unilateral)',c:'Tumbado en el banco, codo fijo apuntando al techo. Baja la mancuerna hacia la frente y sube sin bloquear el codo.'},
-        {n:'Extensión de tríceps a una mano en banco inclinado (unilateral)',c:'Banco inclinado, codo pegado a la cabeza. Extiende el brazo sin mover el hombro.'},
+        {n:'Press francés a una mano con mancuerna',c:'Tumbado en el banco, codo fijo apuntando al techo. Baja la mancuerna hacia la frente y sube sin bloquear el codo.'},
+        {n:'Extensión de tríceps a una mano en banco inclinado',c:'Banco inclinado, codo pegado a la cabeza. Extiende el brazo sin mover el hombro.'},
         {n:'Flexiones de diamante',c:'Manos juntas bajo el pecho formando un diamante. Codos pegados al cuerpo y pecho al suelo.'}]}
     ]},
   md4:{id:'md4',dayIdx:2,md:'MD-4',name:'Pierna · Potencia',when:'Cuatro días antes del partido',
@@ -925,7 +925,7 @@ function vSesion(){
 }
 
 /* ---------- historial ---------- */
-var OLDNAME={'Remo Meadows con landmine':'Remo Meadows con landmine (unilateral)','Extensión de tríceps sobre la cabeza':'Extensión de tríceps tras la nuca (unilateral)'};
+var OLDNAME={'Remo Meadows con landmine':'Remo Meadows con landmine','Extensión de tríceps sobre la cabeza':'Extensión de tríceps tras la nuca'};
 function gkey(n){n=OLDNAME[n||'']||n||'';return n.replace(/\s*\(unilateral\)\s*$/i,'').trim()}
 function history(name){
   var pts={},gk=gkey(name);
@@ -1491,7 +1491,7 @@ function skipEx(){
   if(nx<0){P.pos=P.q.length;P.phase='done';renderPlayer();return}
   P.pos=nx;P.phase='set';loadVals();renderPlayer();
 }
-function isUni(n){return /\(unilateral\)/i.test(n||'')}
+function isUni(n){n=n||'';return /\(unilateral\)/i.test(n)||/^(Remo Meadows con landmine|Extensión de tríceps tras la nuca|Press francés a una mano|Extensión de tríceps a una mano en banco)/i.test(n)}
 function isMan(n){return !isUni(n)&&/mancuerna/i.test(n||'')}
 function unitTxt(n){return isUni(n)?'brazo':isMan(n)?'mancuerna':''}
 function isBw(n){return /dominada|fondo/i.test(n||'')}
