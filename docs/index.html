@@ -413,8 +413,8 @@ textarea#bk{width:100%;min-height:90px;border-radius:12px;border:1px solid var(-
   @keyframes fade{from{opacity:.0;transform:translateY(6px)}to{opacity:1;transform:none}}
   @keyframes up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
 }
-.gate{position:relative;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 32px) 22px calc(env(safe-area-inset-bottom) + 28px);overflow:hidden;background:var(--bg)}
-.gglow{position:absolute;left:50%;bottom:-38%;width:150%;aspect-ratio:1;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(107,51,34,.8),rgba(107,51,34,0));animation:gbreath 7s ease-in-out infinite;pointer-events:none}
+.gate{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 32px) 22px calc(env(safe-area-inset-bottom) + 28px);overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--bg)}
+.gglow{position:fixed;left:50%;bottom:-38%;width:150%;aspect-ratio:1;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(107,51,34,.8),rgba(107,51,34,0));animation:gbreath 7s ease-in-out infinite;pointer-events:none}
 @keyframes gbreath{0%,100%{opacity:.6;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.06)}}
 @keyframes gin{to{opacity:1;transform:none}}
 .gtop{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:20px}
@@ -428,6 +428,7 @@ textarea#bk{width:100%;min-height:90px;border-radius:12px;border:1px solid var(-
 .gform{position:relative;display:grid;gap:10px;opacity:0;animation:gin .9s ease 1.4s forwards}
 .gform [hidden]{display:none!important}
 #gbox{display:grid;gap:10px}
+.gate .pill.dark{}
 .gform input{height:52px;border-radius:999px;border:1px solid var(--line2);background:rgba(255,255,255,.06);color:var(--fg);padding:0 20px;font:400 15px var(--f-ui);width:100%;box-sizing:border-box}
 .gform input::placeholder{color:var(--mute)}
 .gmsg{margin:2px 0 0;min-height:18px;font-size:13px;color:#F2A28A;text-align:center}
@@ -1601,7 +1602,7 @@ function renderGate(){
   document.getElementById('app').innerHTML='<section class="gate"><div class="gglow" aria-hidden="true"></div>'+
     '<div class="gtop"><div class="gmark">'+ZMARK+'</div><div class="gword">'+'ZAGUERO'.split('').map(function(c,i){return '<span style="animation-delay:'+(0.5+i*0.07).toFixed(2)+'s">'+c+'</span>'}).join('')+'<i class="gdot"></i></div></div>'+
     '<div class="gmid"><h1 class="gslogan">Cada entreno<br>cuenta.</h1><p class="gsub">Rutina de gimnasio para futbolistas: fuerza, potencia y presencia en el campo.</p></div>'+
-    '<div class="gform"><button type="button" class="pill white" data-a="gateshow" id="gbtn">Entrar</button>'+
+    '<div class="gform"><button type="button" class="pill white" data-a="gateshow" id="gbtn">Iniciar sesión</button>'+
     '<div id="gbox" hidden><input id="g-em" type="email" autocomplete="username" inputmode="email" placeholder="Correo"><input id="g-pw" type="password" autocomplete="current-password" placeholder="Contraseña"><button type="button" class="pill white" data-a="gatego">Entrar</button><p class="gmsg" id="g-msg" aria-live="polite"></p></div></div></section>';
 }
 
