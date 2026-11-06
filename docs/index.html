@@ -292,6 +292,10 @@ textarea#bk{width:100%;min-height:90px;border-radius:12px;border:1px solid var(-
 .rvlist{text-align:left;max-height:55vh;overflow:auto}
 .rvex{padding:12px 0;border-bottom:1px solid var(--line)}
 .rvname{font-size:15px;color:var(--fg);margin-bottom:6px}
+.rvex select,.rvex .rvnm{height:44px;border-radius:999px;border:1px solid var(--line2);background:rgba(255,255,255,.06);color:var(--fg);padding:0 16px;font:400 14px var(--f-ui);width:100%;box-sizing:border-box;margin-bottom:10px}
+.rvex select option{background:#1a1a1c;color:#f4f4f2}
+.rvex .rvnm[hidden]{display:none}
+.rvex .rvnm::placeholder{color:var(--mute)}
 .rvrow{display:flex;gap:6px;align-items:center;margin:6px 0;font-size:13px;color:var(--mute)}
 .hname{width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--s1);color:var(--fg);font:inherit;margin-bottom:6px}
 .hchk{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--mute);margin-bottom:6px}
@@ -1568,7 +1572,10 @@ function reviewHtml(){
     if(seen[st.i])return;seen[st.i]=1;
     var e=exOf(P.k,st.i);if(!e||!e.sets||!e.sets.length)return;
     var nm=e.n||P.g.slots[st.i].v[0].n;
-    rows+='<div class="rvex"><div class="rvname">'+esc(nm)+'</div>'+e.sets.map(function(x,s){
+    var opts=P.g.slots[st.i].v.map(function(v){return v.n});if(opts.indexOf(nm)<0)opts.unshift(nm);
+    var custom=opts.indexOf(nm)===opts.length-1&&P.g.slots[st.i].v.every(function(v){return v.n!==nm});
+    rows+='<div class="rvex"><select id="rv-ex-'+st.i+'" aria-label="Ejercicio realizado">'+opts.map(function(o){return '<option value="'+esc(o)+'"'+(o===nm?' selected':'')+'>'+esc(o)+'</option>'}).join('')+'<option value="__otro__">Otro ejercicio…</option></select>'+
+      '<input class="rvnm" id="rv-nm-'+st.i+'" placeholder="Escribe el ejercicio que hiciste" hidden>'+e.sets.map(function(x,s){
       if(!x)return '';
       if(x.skip)return '<div class="rvrow"><span>Serie '+(s+1)+'</span><span>No realizado</span></div>';
       if(isNoKg(nm))return '<div class="rvrow"><span>Serie '+(s+1)+'</span><span></span><input id="rv-rp-'+st.i+'-'+s+'" inputmode="numeric" value="'+(x.reps||0)+'"><span>reps</span></div>';
@@ -1583,6 +1590,8 @@ function saveReview(){
   P.q.forEach(function(st){
     if(seen[st.i])return;seen[st.i]=1;
     var e=exOf(P.k,st.i);if(!e||!e.sets)return;
+    var sel=document.getElementById('rv-ex-'+st.i);
+    if(sel){var nn=sel.value==='__otro__'?((document.getElementById('rv-nm-'+st.i)||{}).value||'').trim():sel.value;if(nn&&nn!==e.n)e.n=nn}
     e.sets.forEach(function(x,s){
       var kg=document.getElementById('rv-kg-'+st.i+'-'+s),rp=document.getElementById('rv-rp-'+st.i+'-'+s);
       if(x&&rp){if(kg)x.kg=parseFloat(String(kg.value).replace(',','.'))||0;x.reps=parseInt(rp.value,10)||0}
@@ -1725,6 +1734,7 @@ document.addEventListener('click',function(ev){
 });
 document.addEventListener('change',function(ev){
   var t=ev.target;
+  if(t.id&&t.id.indexOf('rv-ex-')===0){var rn=document.getElementById('rv-nm-'+t.id.slice(6));if(rn)rn.hidden=t.value!=='__otro__';return}
   if(t.id==='start'){if(t.value){S.start=t.value;S.offset=0;save();render(false)}return}
   if(t.id==='rmin'){var v=parseFloat(String(t.value).replace(',','.'))||0;S.rm=S.rm||{};if(v>0)S.rm[t.getAttribute('data-n')]=v;else delete S.rm[t.getAttribute('data-n')];save();render(false);return}
   if(t.id==='mediain'&&t.files&&t.files[0]){
